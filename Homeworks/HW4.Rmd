@@ -165,16 +165,19 @@ arrange(topmyeurope,desc(SP.POP.TOTL))
 
 ```{r}
 # geographic coordinates about countries in the world
-#mapWorld <- map_data("world")
+mapWorld <- map_data("world")
+glimpse(mapWorld)
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*We could use the region variable to join the dataset with the myeurope2017 dataset.*
 
 
 ##### 3.2 (1 pt) We want to use a `left_join()` function to create a new dataset, `mymap`, to add data to the countries in `myeurope2017` dataset from `mapWorld` dataset, matching the two datasets based on the country name. If we then use `dplyr` functions, we can identify some missing values for `lat` and `long` in the new dataset. Indeed, some countries such as United Kingdom did not have a match. Why do you think this happened?
 
 ```{r}
-# your code goes here (make sure to add comments)
+myeurope2017 <- rename(myeurope2017,c("region" = "country"))
+mymap <- myeurope2017 %>%
+left_join(mapWorld, by= c("region"))
 ```
 
 *Your answer goes here. 1-2 sentences.*
