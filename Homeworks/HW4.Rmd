@@ -175,8 +175,8 @@ glimpse(mapWorld)
 ##### 3.2 (1 pt) We want to use a `left_join()` function to create a new dataset, `mymap`, to add data to the countries in `myeurope2017` dataset from `mapWorld` dataset, matching the two datasets based on the country name. If we then use `dplyr` functions, we can identify some missing values for `lat` and `long` in the new dataset. Indeed, some countries such as United Kingdom did not have a match. Why do you think this happened?
 
 ```{r}
-myeurope2017 <- rename(myeurope2017,c("region" = "country.name.en"))
-mymap <- myeurope2017 %>%
+myeurope2017_1 <- rename(myeurope2017,c("region" = "country.name.en"))
+mymap <- myeurope2017_1 %>%
 left_join(mapWorld, by= c("region"))
 ```
 
@@ -188,7 +188,7 @@ left_join(mapWorld, by= c("region"))
 ##### 3.3 (1 pt) To identify all countries that did not have an exact match, do an `anti_join()` and display only distinct country names. How many countries did not have an exact match? *Note: using anti_join() is a very usedul function to identify differences between datasets.*
 
 ```{r}
-anti_join(myeurope2017,mapWorld,by="region")
+anti_join(myeurope2017_1,mapWorld,by="region")
 ```
 
 *5 countries did not have a match.*
@@ -197,12 +197,18 @@ anti_join(myeurope2017,mapWorld,by="region")
 ##### 3.4 (1 pt) Joining datasets by variables containing names often leads to a mismatch because spelling can vary from one dataset to another. Sometimes we need to manually fix spelling in order to be able to match values. Consider the code given below. Replace the name of United Kingdom so that its name in `myeurope2017` dataset corresponds to the name given in `mapWorld` dataset. Following this code, add a pipe and use a `left_join()` function to create the new dataset, `mymap`, adding data to the countries in `myeurope` dataset from `mapWorld` dataset.
 
 ```{r}
-# mymap <- myeurope2017 %>%
-#   mutate(country_clean = recode(country.name.en,
-#                                'United Kingdom' = '???',
-#                                'Bosnia & Herzegovina' = 'Bosnia and Herzegovina',
-#                                'Czechia' = 'Czech Republic',
-#                                'North Macedonia' = 'Macedonia')) # continue code here %>%
+# myeurope2017_1 <- rename(myeurope2017,c("region" = "country.name.en"))
+# mymap <- myeurope2017_1 %>%
+# left_join(mapWorld, by= c("region"))
+mymap <- myeurope2017 %>%
+  mutate(country_clean = recode(country.name.en,
+                               'United Kingdom' = 'UK',
+                               'Bosnia & Herzegovina' = 'Bosnia and Herzegovina',
+                               'Czechia' = 'Czech Republic',
+                               'North Macedonia' = 'Macedonia'))%>% left_join(mapWorld,by= c("country.name.en" = "region"))
+
+
+#
 ```
 
 ##### 3.5 (2 pts) Let's visualize how population growth varies across European countries. Install the package `ggmap`, call the corresponding library, and use the R code provided below. Try to identify what each component of the graph does by completing the code with comments.
