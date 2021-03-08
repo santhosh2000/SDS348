@@ -175,7 +175,7 @@ glimpse(mapWorld)
 ##### 3.2 (1 pt) We want to use a `left_join()` function to create a new dataset, `mymap`, to add data to the countries in `myeurope2017` dataset from `mapWorld` dataset, matching the two datasets based on the country name. If we then use `dplyr` functions, we can identify some missing values for `lat` and `long` in the new dataset. Indeed, some countries such as United Kingdom did not have a match. Why do you think this happened?
 
 ```{r}
-myeurope2017 <- rename(myeurope2017,c("region" = "country"))
+myeurope2017 <- rename(myeurope2017,c("region" = "country.name.en"))
 mymap <- myeurope2017 %>%
 left_join(mapWorld, by= c("region"))
 ```
