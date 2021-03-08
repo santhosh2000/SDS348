@@ -180,16 +180,18 @@ mymap <- myeurope2017 %>%
 left_join(mapWorld, by= c("region"))
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*For the mapWorld dataset, the country United Kingdom is saved as UK under the region.*
+*For the myeurope2017 dataset, the country United Kingdom is saved as United Kingdom.* 
+*When you left-join these two datasets, the names don't match.*
 
 
 ##### 3.3 (1 pt) To identify all countries that did not have an exact match, do an `anti_join()` and display only distinct country names. How many countries did not have an exact match? *Note: using anti_join() is a very usedul function to identify differences between datasets.*
 
 ```{r}
-# your code goes here (make sure to add comments)
+anti_join(myeurope2017,mapWorld,by="region")
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*5 countries did not have a match.*
 
 
 ##### 3.4 (1 pt) Joining datasets by variables containing names often leads to a mismatch because spelling can vary from one dataset to another. Sometimes we need to manually fix spelling in order to be able to match values. Consider the code given below. Replace the name of United Kingdom so that its name in `myeurope2017` dataset corresponds to the name given in `mapWorld` dataset. Following this code, add a pipe and use a `left_join()` function to create the new dataset, `mymap`, adding data to the countries in `myeurope` dataset from `mapWorld` dataset.
