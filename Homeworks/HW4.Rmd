@@ -214,19 +214,19 @@ mymap <- myeurope2017 %>%
 ##### 3.5 (2 pts) Let's visualize how population growth varies across European countries. Install the package `ggmap`, call the corresponding library, and use the R code provided below. Try to identify what each component of the graph does by completing the code with comments.
 
 ```{r}
-# install.packages("ggmap")
-# library(ggmap)
-# 
-# mymap %>%
-#   ggplot(aes(x=long, y=lat, group = group, fill = pop_growth)) + 
-#   # comment next line
-#   geom_polygon(colour = "black") +
-#   # comment next line
-#   scale_fill_gradient(low = "white", high = "blue", guide="colorbar") +
-#   # comment next line
-#   labs(fill = "Growth", title = "Population Growth in 2017", x="Longitude", y="Latitude") +
-#   # comment next line
-#   xlim(-25,50) + ylim(35,70)
+#install.packages("ggmap")
+library(ggmap)
+
+mymap %>%
+  ggplot(aes(x=long, y=lat, group = group, fill = pop_growth)) +
+  # Plots each individual country based on latitude and longitude in the ggplot and            outlines each country with a black color
+   geom_polygon(colour = "black") +
+  # Creates a smooth gradient between white and blue and colorcodes the bar relating to      # pop_growth. Higher pop_growth has colors close to blue. Lower pop_growth has colors      # close to white.
+   scale_fill_gradient(low = "white", high = "blue", guide="colorbar") +
+  # Adds title to graph, axis names to x and y axis and fills in plot with values in Growth
+   labs(fill = "Growth", title = "Population Growth in 2017", x="Longitude", y="Latitude")+ 
+  # Sets scale limits
+   xlim(-25,50) + ylim(35,70)
 ```
 
 ------------------------------------------------------------------------
