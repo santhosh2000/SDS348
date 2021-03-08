@@ -1,7 +1,9 @@
 ---
 title: "HW 4"
 author: "SDS348 Spring 2021"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r global_options, include=FALSE}
@@ -96,9 +98,9 @@ myworld3 %>% filter(year==2017) %>% arrange(desc(pop_growth))
 library(countrycode)
 
 mycodes <- codelist
-mycodes1 <- mycodes %>% select(continent, wb, country.name.en) %>% filter(continent == "Europe") %>% drop_na(wb) # select countries based on continent, wb, and country name in English
+mycodes <- mycodes %>% select(continent, wb, country.name.en) %>% filter(continent == "Europe") %>% drop_na(wb) # select countries based on continent, wb, and country name in English
 # filter with continent == "Europe" and drop_na values in wb column
-nrow(mycodes1)
+nrow(mycodes)
 # your code goes here (make sure to add comments)
 ```
 
@@ -109,19 +111,19 @@ nrow(mycodes1)
 
 ```{r}
 # your code goes here (make sure to add comments)
-#mycodes
- myeurope <- mycodes %>% 
-  left_join(myworld3, by= c("country"))
+mycodes <- rename(mycodes,c("country" = "wb"))
+myeurope <- mycodes %>%
+left_join(myworld3, by= c("country"))
 ```
 
 
 ##### 2.3 (1 pt) Using `dplyr` functions, what was the total population in European countries in 2017? Give your answer in million (round to the next million).
 
 ```{r}
-# your code goes here (make sure to add comments)
+  myeurope1 <- myeurope %>% filter(continent == "Europe" & year == 2017) %>% mutate(Sum = sum(myeurope$SP.POP.TOTL))
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*There is *
 
 
 ##### 2.4 (2 pts) Represent the annual total population in European countries between 2000 and 2017. Express the total population in million. How has European population changed over the years?
@@ -159,7 +161,7 @@ nrow(mycodes1)
 
 ```{r}
 # geographic coordinates about countries in the world
-mapWorld <- map_data("world")
+#mapWorld <- map_data("world")
 ```
 
 *Your answer goes here. 1-2 sentences.*
@@ -186,30 +188,30 @@ mapWorld <- map_data("world")
 ##### 3.4 (1 pt) Joining datasets by variables containing names often leads to a mismatch because spelling can vary from one dataset to another. Sometimes we need to manually fix spelling in order to be able to match values. Consider the code given below. Replace the name of United Kingdom so that its name in `myeurope2017` dataset corresponds to the name given in `mapWorld` dataset. Following this code, add a pipe and use a `left_join()` function to create the new dataset, `mymap`, adding data to the countries in `myeurope` dataset from `mapWorld` dataset.
 
 ```{r}
-mymap <- myeurope2017 %>%
-  mutate(country_clean = recode(country.name.en,
-                               'United Kingdom' = '???',
-                               'Bosnia & Herzegovina' = 'Bosnia and Herzegovina',
-                               'Czechia' = 'Czech Republic',
-                               'North Macedonia' = 'Macedonia')) # continue code here %>%
+# mymap <- myeurope2017 %>%
+#   mutate(country_clean = recode(country.name.en,
+#                                'United Kingdom' = '???',
+#                                'Bosnia & Herzegovina' = 'Bosnia and Herzegovina',
+#                                'Czechia' = 'Czech Republic',
+#                                'North Macedonia' = 'Macedonia')) # continue code here %>%
 ```
 
 ##### 3.5 (2 pts) Let's visualize how population growth varies across European countries. Install the package `ggmap`, call the corresponding library, and use the R code provided below. Try to identify what each component of the graph does by completing the code with comments.
 
 ```{r}
 # install.packages("ggmap")
-library(ggmap)
-
-mymap %>%
-  ggplot(aes(x=long, y=lat, group = group, fill = pop_growth)) + 
-  # comment next line
-  geom_polygon(colour = "black") +
-  # comment next line
-  scale_fill_gradient(low = "white", high = "blue", guide="colorbar") +
-  # comment next line
-  labs(fill = "Growth", title = "Population Growth in 2017", x="Longitude", y="Latitude") +
-  # comment next line
-  xlim(-25,50) + ylim(35,70)
+# library(ggmap)
+# 
+# mymap %>%
+#   ggplot(aes(x=long, y=lat, group = group, fill = pop_growth)) + 
+#   # comment next line
+#   geom_polygon(colour = "black") +
+#   # comment next line
+#   scale_fill_gradient(low = "white", high = "blue", guide="colorbar") +
+#   # comment next line
+#   labs(fill = "Growth", title = "Population Growth in 2017", x="Longitude", y="Latitude") +
+#   # comment next line
+#   xlim(-25,50) + ylim(35,70)
 ```
 
 ------------------------------------------------------------------------
