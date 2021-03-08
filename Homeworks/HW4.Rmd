@@ -120,37 +120,41 @@ left_join(myworld3, by= c("country"))
 ##### 2.3 (1 pt) Using `dplyr` functions, what was the total population in European countries in 2017? Give your answer in million (round to the next million).
 
 ```{r}
-  myeurope1 <- myeurope %>% filter(continent == "Europe" & year == 2017) %>% mutate(Sum = sum(myeurope$SP.POP.TOTL))
+  myeurope1 <- myeurope %>% filter(continent == 'Europe' & year == 2017)
+  sum(myeurope1$SP.POP.TOTL)
 ```
 
-*There is *
+*There are 744 million people in Europe in 2017.*
 
 
 ##### 2.4 (2 pts) Represent the annual total population in European countries between 2000 and 2017. Express the total population in million. How has European population changed over the years?
 
 ```{r}
-# your code goes here (make sure to add comments)
+annualNumbers = myeurope %>% group_by(year) %>% summarise(totalPop=sum(SP.POP.TOTL)/1000000)
+ggplot(annualNumbers,aes(x= `year`, y=totalPop )) + geom_point(size=1.5,color="Blue") + geom_line() + labs(y="Total annual population (million)",x="Year") + ggtitle("Total Annual Population by Year in Europe")
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*Population seems to be strictly increasing except for 2011, where there was a slight dip. After 2011, it seems to continue to increase.*
 
 
 ##### 2.5 (2 pts) Create a new dataset `myeurope2017` by filtering the data for the `year` 2017, dropping the variable `year`, and creating a new variable `prop_urb` which is the proportion of urban population for each country. Which European country had the lowest proportion of urban population in 2017?
 
 ```{r}
-# your code goes here (make sure to add comments)
+myeurope2017 <- myeurope %>%filter(year == 2017)%>% select(-year) %>% mutate(prop_urb = SP.URB.TOTL/SP.POP.TOTL) %>% arrange(prop_urb)
+myeurope2017
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*Liechtenstein had the lowest proportion of urban population in 2017*
 
 
 ##### 2.6 (1 pt) Using `dplyr` functions, find the top 3 countries in terms of their total population in 2017.
 
 ```{r}
-# your code goes here (make sure to add comments)
+topmyeurope <- myeurope %>%filter(year==2017)
+arrange(topmyeurope,desc(SP.POP.TOTL))
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*Russia, Germany, and France are the top 3 countries in terms of total population in 2017*
 
 
 ### Question 3: (6 pts)
