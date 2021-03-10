@@ -51,6 +51,13 @@ pam1 #snorunt and glalie
 plot(pam1, which=1)
 pokemon_pca <- pokemon_num %>%
   scale %>%
-  prcomp
+  prcomp 
+names(pokemon_pca)
+fviz_pca_var(pokemon_pca, col.var = "black")
+# Compute the percentage of variance explained
+percent <- 100* (pokemon_pca$sdev^2 / sum(pokemon_pca$sdev^2))
+# Scree plot with percentages as text
+fviz_screeplot(pokemon_pca) + geom_text(aes(label = round(percent, 2)), size = 4, vjust = -0.5)
 
-
+fviz_cluster(list(data=pokemon_num, cluster = pam1$clustering),  ellipse.type="convex", geom="point", stand=TRUE, palette="Dark2") + labs(title = "PAM") + theme(legend.position="bottom")
+get_eig(pokemon_pca)
