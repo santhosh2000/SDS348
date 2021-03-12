@@ -29,7 +29,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = 
   
   ##### 1.1 (4 pts) Read the ***Abstract*** of the article and the section called *Results of Morphometric Analyses*. What was the goal of this study and what was the main finding?
   
-*The goal of the study is to explain the evolutionary tract of the earliest known sea lion fossil known to man (GKZ-N 0001) and compare it to the Stellar sea lion. The main finding was that the oldest known sea lion fossil has been identified as having the same biological measurements as the Steller sea lion.*
+*The goal of the study is to explain the evolutionary tract of the earliest known sea lion fossil known to man (GKZ-N 0001) and compare it to the Stellar sea lion (E.jubatus). The main finding was that the oldest known sea lion fossil has been identified as having the same biological measurements as the Steller sea lion (E.jubatus).*
   
   
   ##### 1.2 (2 pts) Import the dataset from Excel. How many rows and how many columns are in this dataset? What does a row represent? What does a column represent?
@@ -72,7 +72,6 @@ print(mean(HW5_clean$C,na.rm = TRUE))
 ```{r}
 # your code goes here (make sure to add comments)
 chungus <- HW5_clean %>% select_if(!is.na(HW5_clean[51,])) %>% drop_na()
-chungus$ID <- NULL
 nrow(chungus)
 ncol(chungus)
 ```
@@ -95,6 +94,7 @@ print(mean(chungus$C))
   ##### 3.1 (2 pts) Using the function `prcomp()`, calculate the principal components (PCs) for the dataset obtained in Question 2.4. Find the percentage of explained variance for each PC. What is the cumulative percentage of explained variance for PC1 and PC2? 
   
 ```{r}
+chungus$ID <- NULL
 chungusPCA <- chungus %>% scale() %>% prcomp()
 names(chungusPCA)
 percent <- 100*(chungusPCA$sdev^2/sum(chungusPCA$sdev^2))
@@ -116,17 +116,25 @@ get_eig(chungusPCA)
   
   ##### 3.3 (2 pts) Consider the matrix, x, of new data provided by the PCA, save it as a data frame, and add the ID variable from the dataset created in Question 2.3. Next, use the `ID` variable to create two variables `species` and `sex` by using the function `separate()` (hint: in the `ID` variable, what symbol separates the species from sex?).Note: you should get a warning because the fossil specimen is in a different format. The warning will not prevent your code from working. Finally, the article states that the fossil specimen has to be male. Replace the missing value of sex for the fossil specimen GKZ-N 00001 (hint: use the functions `mutate()` and `replace_na()`).
   
-  ```{r}
-# your code goes here (make sure to add comments)
+```{r}
+chungusPCAframe <- as.data.frame(chungusPCA$x)
+chungus <- HW5_clean %>% select_if(!is.na(HW5_clean[51,])) %>% drop_na()
+chungusPCAframe$ID <- chungus$ID
+col_idx <- grep("ID", names(chungusPCAframe))
+chungusPCAframe <- chungusPCAframe[, c(col_idx, (1:ncol(chungusPCAframe))[-col_idx])]
+chungaIntermediateFrame <- chungusPCAframe %>% separate(ID, c('species', 'sex'), sep="\\[|\\]")
+chungaFinishedFrame <- chungaIntermediateFrame %>% mutate(sex= replace_na(sex, 'm'))
+glimpse(chungaFinishedFrame)
+
 ```
 
 
 ##### 3.4 (1 pt) Using `ggplot` and the dataset created in the previous question, represent the observations along the new variables PC1 and PC2. In the aesthetics, color the observations by their species and shape the observations by their sex. The fossil specimen GKZ-N 00001 appears to be close to which species?
 ```{r}
-# your code goes here (make sure to add comments)
+ggplot(chungaFinishedFrame, aes(x = PC1, y = PC2, color = species, shape=sex)) + geom_point() + ggtitle("Plotting of Data according to PC1 and PC2")
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*The fossil specimen GKZ-N 00001 appears to be close to a male E.jubatus species!*
   
   ### Question 4: (6 pts)
   
