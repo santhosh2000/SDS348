@@ -1,0 +1,160 @@
+---
+  title: "HW 5"
+author: "SDS348 Spring 2021"
+output: html_document
+---
+  
+  ```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, R.options=list(max.print=100))
+
+# Edit the file starting below
+```
+
+## Name: Santhosh Saravanan
+## EID: sks3648
+
+**This homework is due on Mar 12, 2021 at 8am. Submit a pdf file on Gradescope.**
+  
+  *For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+  
+  ------------------------------------------------------------------------
+  
+  ### Question 1: (6 pts)
+  
+  #### The dataset for this homework comes from the article:
+  
+  #### *Tsuzuku N, Kohno N. 2020. The oldest record of the Steller sea lion Eumetopias jubatus (Schreber, 1776) from the early Pleistocene of the North Pacific. <https://doi.org/10.7717/peerj.9709>*
+  
+  #### Under the supplemental information, the data was retrieved from a word document into an excel document.
+  
+  ##### 1.1 (4 pts) Read the ***Abstract*** of the article and the section called *Results of Morphometric Analyses*. What was the goal of this study and what was the main finding?
+  
+*The goal of the study is to explain the evolutionary tract of the earliest known sea lion fossil known to man (GKZ-N 0001) and compare it to the Stellar sea lion. The main finding was that the oldest known sea lion fossil has been identified as having the same biological measurements as the Steller sea lion.*
+  
+  
+  ##### 1.2 (2 pts) Import the dataset from Excel. How many rows and how many columns are in this dataset? What does a row represent? What does a column represent?
+```{r}
+library(readxl)
+library(tidyverse)
+HW5 <- read_excel("~/Downloads/HW5.xlsx")
+glimpse(HW5)
+```
+
+*There are 51 rows and 30 columns in this dataset. The rows refer to the 50 mandibles of fur seals and sea lions chosen for comparison with GKZ-N 00001. The last row corresponds to GKZ-N 00001. The columns must be the measurements taken for the different mandibles, I presume.*
+  
+  ### Question 2: (7 pts)
+  
+  #### Before we can analyze the data, let's clean it.
+  
+  ##### 2.1 (1 pt) When importing this dataset into R Studio, which variables were considered numeric? Why are some measurements not considered as numeric?
+  
+```{r}
+library(tidyverse)
+head(HW5)
+glimpse(HW5)
+```
+
+*None of the variables are numeric. Some measurements are not considered numeric simply because the dataset may have been created as having string measurements. The measurements may have been originally keyed as characters, so we'll have to blame the people responsible for the recording of the measurements :). *
+
+##### 2.2 (2 pts) Using `dplyr` functions, replace all "-" in the dataset by missing values *NA* then make sure all measurements are defined as numeric variables. What is the mean rostral tip of mandible C?
+
+```{r}
+# your code goes here (make sure to add comments)
+#HW5 = sapply(HW5, as.numeric )
+HW5_clean = na_if(HW5,"-")
+HW5_clean[-1] <- lapply(HW5_clean[-1], as.numeric) # convert all columns except the first one to numeric. we want to preserve the id's
+print(mean(HW5_clean$C,na.rm = TRUE))
+```
+
+*The mean rostral tip of mandible C is 34.86622.*
+  
+  ##### 2.3 (2 pts) Using `dplyr` functions, only keep numeric variables that are not missing for the fossil specimen GKZ-N 00001 (hint: you can use `select_if()` on the condition that `HW5_clean[51,]` has *no* missing value with `is.na()`). Then remove the rest of the missing values. How many columns and how many rows are remaining in this dataset?
+```{r}
+# your code goes here (make sure to add comments)
+chungus <- HW5_clean %>% select_if(!is.na(HW5_clean[51,])) %>% drop_na()
+chungus$ID <- NULL
+nrow(chungus)
+ncol(chungus)
+```
+
+*There are 42 rows and 23 columns in this dataset.*
+  
+  ##### 2.4 (2 pts) Using `dplyr` functions, only keep numeric variables and scale (also called standardize) each numeric variable. What should the mean of the scaled variable of the rostral tip of mandible C be?
+  
+```{r}
+chungus = chungus %>% mutate_if(is.numeric,scale)
+print(mean(chungus$C))
+```
+
+*The mean of the scaled variable of the rostral tip of mandible C should be* *1.487009e-16.*
+  
+  ### Question 3: (6 pts)
+  
+  #### Let's now perform PCA on the measurements available for the fossil specimen GKZ-N 00001.
+  
+  ##### 3.1 (2 pts) Using the function `prcomp()`, calculate the principal components (PCs) for the dataset obtained in Question 2.4. Find the percentage of explained variance for each PC. What is the cumulative percentage of explained variance for PC1 and PC2? 
+  
+```{r}
+chungusPCA <- chungus %>% scale() %>% prcomp()
+names(chungusPCA)
+percent <- 100*(chungusPCA$sdev^2/sum(chungusPCA$sdev^2))
+print(percent[1] + percent[2])
+
+```
+
+*89.46766 is the cumulative percentage of explained variance for PC1 and PC2.*
+  
+  ##### 3.2 (1 pt) Construct a scree plot using the package `factoextra` with the function `fviz_screeplot` and determine how many principal components should be considered.
+  
+```{r}
+library(factoextra)
+fviz_screeplot(chungusPCA)
+get_eig(chungusPCA)
+```
+
+*2 principal components should be considered, as they both have eigenvalues greater than 1 and 1 and 2 form the crux of the elbow.*
+  
+  ##### 3.3 (2 pts) Consider the matrix, x, of new data provided by the PCA, save it as a data frame, and add the ID variable from the dataset created in Question 2.3. Next, use the `ID` variable to create two variables `species` and `sex` by using the function `separate()` (hint: in the `ID` variable, what symbol separates the species from sex?).Note: you should get a warning because the fossil specimen is in a different format. The warning will not prevent your code from working. Finally, the article states that the fossil specimen has to be male. Replace the missing value of sex for the fossil specimen GKZ-N 00001 (hint: use the functions `mutate()` and `replace_na()`).
+  
+  ```{r}
+# your code goes here (make sure to add comments)
+```
+
+
+##### 3.4 (1 pt) Using `ggplot` and the dataset created in the previous question, represent the observations along the new variables PC1 and PC2. In the aesthetics, color the observations by their species and shape the observations by their sex. The fossil specimen GKZ-N 00001 appears to be close to which species?
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+  
+  ### Question 4: (6 pts)
+  
+  #### Let's now perform the partition around medoids (PAM) algorithm on the new variables to identify clusters of sea lions and determine which cluster the fossil specimen GKZ-N 00001 is likely to belong to.
+  
+  ##### 4.1 (2 pts) Using the function `pam()` from the library `cluster`, perform the PAM algorithm on the dataset obtained in Question 3.3. Make sure to only select the variables `PC1` and `PC2`. Add the identification of the cluster number to the dataset from Question 3.3 (hint: use one of the elements created through the PAM algorithm). How many clusters are we looking for if the goal is to (hopefully) recover the different species?
+  
+  ```{r}
+library(cluster)
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+  
+  ##### 4.2 (2 pts) Using `ggplot` and the dataset created in the previous question, let's create a scatterplot with the variables PC1 and PC2 to visualize the groups of species/sex and the clusters. In `geom_point`, specify the aesthetics of coloring by `species` and shaping by `sex`. Then add a layer called `stat_ellipse()` with the aesthetic of group by `cluster`. In the cluster containing the fossil specimen GKZ-N 00001, what species and sex are the other sea lions? What can you conclude about the species and sex of the fossil specimen GKZ-N 00001?
+  ```{r}
+# your code goes here (make sure to add comments))
+```
+
+*Your answer goes here. 1-2 sentences.*
+  
+  ##### 4.3 (2 pts) Putting it all together. Reflect on and summarize in 1-2 sentences the different steps taken through this assignment. Compare your conclusions to the findings discussed by the researchers in the article (cite their findings).
+  
+  *Your answer goes here. 2-3 sentences.*
+  
+  ------------------------------------------------------------------------
+  
+  ```{r, echo=F}
+## DO NOT DELETE THIS BLOCK!
+Sys.info()
+```
