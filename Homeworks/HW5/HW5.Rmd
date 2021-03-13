@@ -112,7 +112,7 @@ fviz_screeplot(chungusPCA)
 get_eig(chungusPCA)
 ```
 
-*2 principal components should be considered, as they both have eigenvalues greater than 1 and 1 and 2 form the crux of the elbow.*
+*2 principal components should be considered, as they both have eigenvalues greater than 1 and 1 and 2 form the crux of the elbow. Also, the cumulative proportion of variance is greater than 80%. PC1 and PC2 satisfy all three conditions of Kaiser's rule.*
   
   ##### 3.3 (2 pts) Consider the matrix, x, of new data provided by the PCA, save it as a data frame, and add the ID variable from the dataset created in Question 2.3. Next, use the `ID` variable to create two variables `species` and `sex` by using the function `separate()` (hint: in the `ID` variable, what symbol separates the species from sex?).Note: you should get a warning because the fossil specimen is in a different format. The warning will not prevent your code from working. Finally, the article states that the fossil specimen has to be male. Replace the missing value of sex for the fossil specimen GKZ-N 00001 (hint: use the functions `mutate()` and `replace_na()`).
   
@@ -142,23 +142,28 @@ ggplot(chungaFinishedFrame, aes(x = PC1, y = PC2, color = species, shape=sex)) +
   
   ##### 4.1 (2 pts) Using the function `pam()` from the library `cluster`, perform the PAM algorithm on the dataset obtained in Question 3.3. Make sure to only select the variables `PC1` and `PC2`. Add the identification of the cluster number to the dataset from Question 3.3 (hint: use one of the elements created through the PAM algorithm). How many clusters are we looking for if the goal is to (hopefully) recover the different species?
   
-  ```{r}
+```{r}
+library(factoextra)
 library(cluster)
-# your code goes here (make sure to add comments)
+fviz_nbclust(chungaFinishedFrame%>%select(3,4), FUNcluster = pam, method = "s")
+pam1 <- chungaFinishedFrame%>%select(3,4) %>%
+  pam(k=3)
+pam1
+plot(pam1,which=2)
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*From this graph, it's quite obvious that we need 3 clusters if the goal is to recover the different species. The silhouette width is also much greater than 0.26-0.50, where the structure is weak and could be artificial. The average silhouette width is 0.57, which indicates that a reasonable structure has been found. I picked 3 clusters because there wasn't a large difference between the optimal number of clusters (2 and 3).*
   
   ##### 4.2 (2 pts) Using `ggplot` and the dataset created in the previous question, let's create a scatterplot with the variables PC1 and PC2 to visualize the groups of species/sex and the clusters. In `geom_point`, specify the aesthetics of coloring by `species` and shaping by `sex`. Then add a layer called `stat_ellipse()` with the aesthetic of group by `cluster`. In the cluster containing the fossil specimen GKZ-N 00001, what species and sex are the other sea lions? What can you conclude about the species and sex of the fossil specimen GKZ-N 00001?
-  ```{r}
-# your code goes here (make sure to add comments))
+```{r}
+ggplot(chungaFinishedFrame, aes(x = PC1, y = PC2,color =species, shape=sex)) + geom_point() + stat_ellipse(aes(group=pam1$clustering)) + ggtitle("Comparison of Other Seals to PC1 and PC2 Ellipses")
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*In the cluster containing the fossil specimen GKZ-N 00001, the other species and sex are male E.jubatus seals. The fossil specimen GKZ-N 00001 is closely related to the fossils of male E.jubatus seals.*
   
   ##### 4.3 (2 pts) Putting it all together. Reflect on and summarize in 1-2 sentences the different steps taken through this assignment. Compare your conclusions to the findings discussed by the researchers in the article (cite their findings).
   
-  *Your answer goes here. 2-3 sentences.*
+  *The steps taken in this assignments include determining the optimal number of clusters through eigenvalues, cumulative proportion of variation, and forming the crux of the elbow through Kaiser's rule. Next, you then run the PAM algorithm and confirm the number of clusters and change, if necessary. Then, find the number of clusters and find what mystery fossils is most related to what other fossils. The conclusion I got seemed to match the findings by the researchers in the article.*
   
   ------------------------------------------------------------------------
   
