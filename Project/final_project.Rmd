@@ -2,8 +2,8 @@
 title: "Final Project"
 author: "SDS348 Spring 2021"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
   
   ```{r global_options, include=FALSE}
