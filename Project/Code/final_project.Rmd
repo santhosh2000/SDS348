@@ -1,11 +1,15 @@
 ---
 title: "Final Project"
 author: "SDS348 Spring 2021"
-output: html_document
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
 ---
   
   ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, R.options=list(max.print=100))
+
 
 # Edit the file starting below
 ```
@@ -13,17 +17,20 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = 
 ## Name: Santhosh Saravanan
 ## EID: sks3648
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=600)}
 library(readxl)
 library(tidyverse)
 library(kableExtra)
-USArrests6_1973 <- as.data.frame(read_csv("~/git/SDS348/Project/Datasets/USArrests6_1973.csv"))
+USArrests6_1973 <- as.data.frame(
+  read_csv("~/git/SDS348/Project/Datasets/USArrests6_1973.csv"))
 glimpse(USArrests6_1973)
-allArrests <- as.data.frame(read_csv("~/git/SDS348/Project/Datasets/state_crime_all.csv"))
+allArrests <- as.data.frame(
+  read_csv("~/git/SDS348/Project/Datasets/state_crime_all.csv"))
 glimpse(allArrests)
 colnames(USArrests6_1973)[1] <- "State"
 allArrests1973 <- allArrests %>% filter(Year == 1973 & State != "United States")
-USArrestscombined <- USArrests6_1973 %>% left_join(allArrests1973,by = c("State")) %>% filter(!is.na(State))
+USArrestscombined <- USArrests6_1973 %>% left_join(allArrests1973,by = c("State")) %>% 
+  filter(!is.na(State))
 NE<- c("Connecticut","Maine","Massachusetts","New Hampshire",
              "Rhode Island","Vermont","New Jersey","New York",
              "Pennsylvania")
@@ -42,51 +49,77 @@ USArrestscombined <- USArrestscombined %>%
                         State %in% W  ~ "West",
                         State %in% NE  ~ "NorthEast",
                         State %in% S ~ "South")) %>% arrange(desc(Region))
-USArrestscombinedImportant <- USArrestscombined %>% select(-c(Data.Rates.Violent.Murder, Data.Rates.Violent.Assault, Data.Rates.Violent.Rape))
+USArrestscombinedImportant <- USArrestscombined %>% select(-c(Data.Rates.Violent.Murder,Data.Rates.Violent.Assault, Data.Rates.Violent.Rape))
 
 ```
-```{r}
+
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
-  summarise(mean_rape = mean(Rape, na.rm = TRUE),mean_assault = mean(Assault, na.rm = TRUE),mean_murder = mean(Murder, na.rm = TRUE), mean_burglary = mean(Data.Rates.Property.Burglary,na.rm = TRUE), mean_larceny = mean(Data.Rates.Property.Larceny,na.rm = TRUE), mean_motor = mean(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
+  summarise(mean_rape = mean(Rape, na.rm = TRUE),mean_assault = mean(Assault, na.rm = TRUE),
+mean_murder = mean(Murder, na.rm = TRUE),
+mean_burglary = mean(Data.Rates.Property.Burglary,na.rm = TRUE),
+mean_larceny = mean(Data.Rates.Property.Larceny,na.rm = TRUE), 
+mean_motor = mean(Data.Rates.Property.Motor, na.rm = TRUE))%>% 
+  kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
-  summarise(min_rape = min(Rape, na.rm = TRUE),min_assault = min(Assault, na.rm = TRUE),min_murder = min(Murder, na.rm = TRUE), min_burglary = min(Data.Rates.Property.Burglary,na.rm = TRUE), min_larceny = min(Data.Rates.Property.Larceny,na.rm = TRUE), min_motor = min(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
+  summarise(min_rape = min(Rape, na.rm = TRUE),min_assault = min(Assault, na.rm = TRUE),
+min_murder = min(Murder, na.rm = TRUE), 
+min_burglary = min(Data.Rates.Property.Burglary,na.rm = TRUE), 
+min_larceny = min(Data.Rates.Property.Larceny,na.rm = TRUE), 
+min_motor = min(Data.Rates.Property.Motor, na.rm = TRUE)) %>% 
+kbl(caption = "Recreating booktabs style table") %>%
+kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
+```
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+USArrestscombinedImportant %>%
+  summarise(max_rape = max(Rape, na.rm = TRUE),
+max_assault = max(Assault, na.rm = TRUE),
+max_murder = max(Murder, na.rm = TRUE), 
+max_burglary = max(Data.Rates.Property.Burglary,na.rm = TRUE), 
+max_larceny = max(Data.Rates.Property.Larceny,na.rm = TRUE), 
+max_motor = max(Data.Rates.Property.Motor, na.rm = TRUE))%>% 
+  kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
-  summarise(max_rape = max(Rape, na.rm = TRUE),max_assault = max(Assault, na.rm = TRUE),max_murder = max(Murder, na.rm = TRUE), max_burglary = max(Data.Rates.Property.Burglary,na.rm = TRUE), max_larceny = max(Data.Rates.Property.Larceny,na.rm = TRUE), max_motor = max(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
+  summarise(sd_rape = sd(Rape, na.rm = TRUE),sd_assault = sd(Assault, na.rm = TRUE),
+sd_murder = sd(Murder, na.rm = TRUE),
+sd_burglary = sd(Data.Rates.Property.Burglary,na.rm = TRUE), 
+sd_larceny = sd(Data.Rates.Property.Larceny,na.rm = TRUE), 
+sd_motor = sd(Data.Rates.Property.Motor, na.rm = TRUE)) %>% 
+  kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
-  summarise(sd_rape = sd(Rape, na.rm = TRUE),sd_assault = sd(Assault, na.rm = TRUE),sd_murder = sd(Murder, na.rm = TRUE), sd_burglary = sd(Data.Rates.Property.Burglary,na.rm = TRUE), sd_larceny = sd(Data.Rates.Property.Larceny,na.rm = TRUE), sd_motor = sd(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
+  summarise(variation_rape = var(Rape, na.rm = TRUE),variation_assault = var(Assault, na.rm = TRUE),
+variation_murder = var(Murder, na.rm = TRUE), 
+variation_burglary = var(Data.Rates.Property.Burglary,na.rm = TRUE), variation_larceny = var(Data.Rates.Property.Larceny,na.rm = TRUE), variation_motor = var(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
+  kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
+```
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+USArrestscombinedImportant %>%
+  summarise(Distinct_Values_rape = n_distinct(Rape, na.rm = TRUE),Distinct_Values_assault = n_distinct(Assault, na.rm = TRUE),Distinct_Values_murder = n_distinct(Murder, na.rm = TRUE), Distinct_Values_burglary = n_distinct(Data.Rates.Property.Burglary,na.rm = TRUE), Distinct_Values_larceny = n_distinct(Data.Rates.Property.Larceny,na.rm = TRUE), Distinct_Values_motor = n_distinct(Data.Rates.Property.Motor, na.rm = TRUE)) %>% 
+  kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
 
-```{r}
-USArrestscombinedImportant %>%
-  summarise(variation_rape = var(Rape, na.rm = TRUE),variation_assault = var(Assault, na.rm = TRUE),variation_murder = var(Murder, na.rm = TRUE), variation_burglary = var(Data.Rates.Property.Burglary,na.rm = TRUE), variation_larceny = var(Data.Rates.Property.Larceny,na.rm = TRUE), variation_motor = var(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
-  kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
-```
-```{r}
-USArrestscombinedImportant %>%
-  summarise(Distinct_Values_rape = n_distinct(Rape, na.rm = TRUE),Distinct_Values_assault = n_distinct(Assault, na.rm = TRUE),Distinct_Values_murder = n_distinct(Murder, na.rm = TRUE), Distinct_Values_burglary = n_distinct(Data.Rates.Property.Burglary,na.rm = TRUE), Distinct_Values_larceny = n_distinct(Data.Rates.Property.Larceny,na.rm = TRUE), Distinct_Values_motor = n_distinct(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
-  kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
-```
-
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
   summarise(Quantile_rape = quantile(Rape, na.rm = TRUE),Quantile_assault = quantile(Assault, na.rm = TRUE),Quantile_murder = quantile(Murder, na.rm = TRUE), Quantile_burglary = quantile(Data.Rates.Property.Burglary,na.rm = TRUE), Quantile_larceny = quantile(Data.Rates.Property.Larceny,na.rm = TRUE), Quantile_motor = quantile(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark() %>% footnote(general = "Here are general comments of the table. ",
-           number = c("First value for column  is at 0%; ", "Second value of for column is at 25%"),
-           alphabet = c("Third value for column is at 50%; ", "Fourth value for column  is at 75%; "),
-           symbol = c("Fifth value for column  is at 100% ")
+number = c("First value for column  is at 0%; ", "Second value of for column is at 25%"),
+alphabet = c("Third value for column is at 50%; ", "Fourth value for column  is at 75%; "),
+symbol = c("Fifth value for column  is at 100% ")
            )
 ```
 
@@ -100,48 +133,52 @@ USArrestscombinedImportant %>%
 
 
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
   group_by(Region) %>%
-  summarise(mean_rape = mean(Rape, na.rm = TRUE),mean_assault = mean(Assault, na.rm = TRUE),mean_murder = mean(Murder, na.rm = TRUE), mean_burglary = mean(Data.Rates.Property.Burglary,na.rm = TRUE), mean_larceny = mean(Data.Rates.Property.Larceny,na.rm = TRUE), mean_motor = mean(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
+  summarise(mean_rape = mean(Rape, na.rm = TRUE),mean_assault = mean(Assault, na.rm = TRUE),mean_murder = mean(Murder, na.rm = TRUE), mean_burglary = mean(Data.Rates.Property.Burglary,na.rm = TRUE), mean_larceny = mean(Data.Rates.Property.Larceny,na.rm = TRUE), mean_motor = mean(Data.Rates.Property.Motor, na.rm = TRUE)) %>% 
+  kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
   group_by(Region) %>%
-  summarise(min_rape = min(Rape, na.rm = TRUE),min_assault = min(Assault, na.rm = TRUE),min_murder = min(Murder, na.rm = TRUE), min_burglary = min(Data.Rates.Property.Burglary,na.rm = TRUE), min_larceny = min(Data.Rates.Property.Larceny,na.rm = TRUE), min_motor = min(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
+  summarise(min_rape = min(Rape, na.rm = TRUE),min_assault = min(Assault, na.rm = TRUE),min_murder = min(Murder, na.rm = TRUE), min_burglary = min(Data.Rates.Property.Burglary,na.rm = TRUE), min_larceny = min(Data.Rates.Property.Larceny,na.rm = TRUE), min_motor = min(Data.Rates.Property.Motor, na.rm = TRUE)) %>% 
+  kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
   group_by(Region) %>%
-  summarise(max_rape = max(Rape, na.rm = TRUE),max_assault = max(Assault, na.rm = TRUE),max_murder = max(Murder, na.rm = TRUE), max_burglary = max(Data.Rates.Property.Burglary,na.rm = TRUE), max_larceny = max(Data.Rates.Property.Larceny,na.rm = TRUE), max_motor = max(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
+  summarise(max_rape = max(Rape, na.rm = TRUE),max_assault = max(Assault, na.rm = TRUE),max_murder = max(Murder, na.rm = TRUE), max_burglary = max(Data.Rates.Property.Burglary,na.rm = TRUE), max_larceny = max(Data.Rates.Property.Larceny,na.rm = TRUE), max_motor = max(Data.Rates.Property.Motor, na.rm = TRUE)) %>% 
+  kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
   group_by(Region) %>%
   summarise(sd_rape = sd(Rape, na.rm = TRUE),sd_assault = sd(Assault, na.rm = TRUE),sd_murder = sd(Murder, na.rm = TRUE), sd_burglary = sd(Data.Rates.Property.Burglary,na.rm = TRUE), sd_larceny = sd(Data.Rates.Property.Larceny,na.rm = TRUE), sd_motor = sd(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
   group_by(Region) %>%
   summarise(variation_rape = var(Rape, na.rm = TRUE),variation_assault = var(Assault, na.rm = TRUE),variation_murder = var(Murder, na.rm = TRUE), variation_burglary = var(Data.Rates.Property.Burglary,na.rm = TRUE), variation_larceny = var(Data.Rates.Property.Larceny,na.rm = TRUE), variation_motor = var(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
   group_by(Region) %>%
-  summarise(Distinct_Values_rape = n_distinct(Rape, na.rm = TRUE),Distinct_Values_assault = n_distinct(Assault, na.rm = TRUE),Distinct_Values_murder = n_distinct(Murder, na.rm = TRUE), Distinct_Values_burglary = n_distinct(Data.Rates.Property.Burglary,na.rm = TRUE), Distinct_Values_larceny = n_distinct(Data.Rates.Property.Larceny,na.rm = TRUE), Distinct_Values_motor = n_distinct(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
+  summarise(Distinct_Values_rape = n_distinct(Rape, na.rm = TRUE),Distinct_Values_assault = n_distinct(Assault, na.rm = TRUE),Distinct_Values_murder = n_distinct(Murder, na.rm = TRUE), Distinct_Values_burglary = n_distinct(Data.Rates.Property.Burglary,na.rm = TRUE), Distinct_Values_larceny = n_distinct(Data.Rates.Property.Larceny,na.rm = TRUE), Distinct_Values_motor = n_distinct(Data.Rates.Property.Motor, na.rm = TRUE)) %>% 
+  kbl(caption = "Recreating booktabs style table") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
 ```
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportant %>%
   group_by(Region) %>%
   summarise(Quantile_rape = quantile(Rape, na.rm = TRUE),Quantile_assault = quantile(Assault, na.rm = TRUE),Quantile_murder = quantile(Murder, na.rm = TRUE), Quantile_burglary = quantile(Data.Rates.Property.Burglary,na.rm = TRUE), Quantile_larceny = quantile(Data.Rates.Property.Larceny,na.rm = TRUE), Quantile_motor = quantile(Data.Rates.Property.Motor, na.rm = TRUE)) %>% kbl(caption = "Recreating booktabs style table") %>%
@@ -151,7 +188,7 @@ USArrestscombinedImportant %>%
            symbol = c("Fifth value of region  for column  is at 100% ")
            )
 ```
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 USArrestscombinedImportantCorrelation <- USArrestscombinedImportant %>%  select_if(is.numeric) %>% select(contains('Rates')) 
 USArrestscombinedImportantCorrelation$Murder <- USArrestscombinedImportant$Murder
 USArrestscombinedImportantCorrelation$Assault <- USArrestscombinedImportant$Assault
@@ -164,14 +201,14 @@ USArrestscombinedImportantCorrelation <- USArrestscombinedImportantCorrelation%>
     )
 
 ```
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 library("Hmisc")
 corMatrix <- rcorr(as.matrix(USArrestscombinedImportantCorrelation))
 as.data.frame(corMatrix$r) %>% kbl(caption = "Correlation Matrix of Different State Crimes in 1973") %>%
   kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark() 
 ```
 
-```{r}
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 cor(USArrestscombinedImportantCorrelation) %>%
   # Save as a data frame
   as.data.frame %>%

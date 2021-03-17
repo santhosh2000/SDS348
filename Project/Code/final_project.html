@@ -180,7 +180,8 @@ pre code {
 <pre class="r"><code>library(readxl)
 library(tidyverse)
 library(kableExtra)
-USArrests6_1973 &lt;- as.data.frame(read_csv(&quot;~/git/SDS348/Project/Datasets/USArrests6_1973.csv&quot;))
+USArrests6_1973 &lt;- as.data.frame(
+  read_csv(&quot;~/git/SDS348/Project/Datasets/USArrests6_1973.csv&quot;))
 glimpse(USArrests6_1973)</code></pre>
 <pre><code>## Rows: 50
 ## Columns: 5
@@ -189,7 +190,8 @@ glimpse(USArrests6_1973)</code></pre>
 ## $ Assault  &lt;dbl&gt; 236, 263, 294, 190, 276, 204, 110, 238, 335, 211, 46, 120, 24…
 ## $ UrbanPop &lt;dbl&gt; 58, 48, 80, 50, 91, 78, 77, 72, 80, 60, 83, 54, 83, 65, 57, 6…
 ## $ Rape     &lt;dbl&gt; 21.2, 44.5, 31.0, 19.5, 40.6, 38.7, 11.1, 15.8, 31.9, 25.8, 2…</code></pre>
-<pre class="r"><code>allArrests &lt;- as.data.frame(read_csv(&quot;~/git/SDS348/Project/Datasets/state_crime_all.csv&quot;))
+<pre class="r"><code>allArrests &lt;- as.data.frame(
+  read_csv(&quot;~/git/SDS348/Project/Datasets/state_crime_all.csv&quot;))
 glimpse(allArrests)</code></pre>
 <pre><code>## Rows: 2,751
 ## Columns: 21
@@ -216,7 +218,8 @@ glimpse(allArrests)</code></pre>
 ## $ Data.Totals.Violent.Robbery   &lt;dbl&gt; 898, 630, 754, 828, 992, 992, 1124, 1167…</code></pre>
 <pre class="r"><code>colnames(USArrests6_1973)[1] &lt;- &quot;State&quot;
 allArrests1973 &lt;- allArrests %&gt;% filter(Year == 1973 &amp; State != &quot;United States&quot;)
-USArrestscombined &lt;- USArrests6_1973 %&gt;% left_join(allArrests1973,by = c(&quot;State&quot;)) %&gt;% filter(!is.na(State))
+USArrestscombined &lt;- USArrests6_1973 %&gt;% left_join(allArrests1973,by = c(&quot;State&quot;)) %&gt;% 
+  filter(!is.na(State))
 NE&lt;- c(&quot;Connecticut&quot;,&quot;Maine&quot;,&quot;Massachusetts&quot;,&quot;New Hampshire&quot;,
              &quot;Rhode Island&quot;,&quot;Vermont&quot;,&quot;New Jersey&quot;,&quot;New York&quot;,
              &quot;Pennsylvania&quot;)
@@ -235,9 +238,14 @@ USArrestscombined &lt;- USArrestscombined %&gt;%
                         State %in% W  ~ &quot;West&quot;,
                         State %in% NE  ~ &quot;NorthEast&quot;,
                         State %in% S ~ &quot;South&quot;)) %&gt;% arrange(desc(Region))
-USArrestscombinedImportant &lt;- USArrestscombined %&gt;% select(-c(Data.Rates.Violent.Murder, Data.Rates.Violent.Assault, Data.Rates.Violent.Rape))</code></pre>
+USArrestscombinedImportant &lt;- USArrestscombined %&gt;% select(-c(Data.Rates.Violent.Murder,Data.Rates.Violent.Assault, Data.Rates.Violent.Rape))</code></pre>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
-  summarise(mean_rape = mean(Rape, na.rm = TRUE),mean_assault = mean(Assault, na.rm = TRUE),mean_murder = mean(Murder, na.rm = TRUE), mean_burglary = mean(Data.Rates.Property.Burglary,na.rm = TRUE), mean_larceny = mean(Data.Rates.Property.Larceny,na.rm = TRUE), mean_motor = mean(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+  summarise(mean_rape = mean(Rape, na.rm = TRUE),mean_assault = mean(Assault, na.rm = TRUE),
+mean_murder = mean(Murder, na.rm = TRUE),
+mean_burglary = mean(Data.Rates.Property.Burglary,na.rm = TRUE),
+mean_larceny = mean(Data.Rates.Property.Larceny,na.rm = TRUE), 
+mean_motor = mean(Data.Rates.Property.Motor, na.rm = TRUE))%&gt;% 
+  kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -289,8 +297,13 @@ mean_motor
 </tbody>
 </table>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
-  summarise(min_rape = min(Rape, na.rm = TRUE),min_assault = min(Assault, na.rm = TRUE),min_murder = min(Murder, na.rm = TRUE), min_burglary = min(Data.Rates.Property.Burglary,na.rm = TRUE), min_larceny = min(Data.Rates.Property.Larceny,na.rm = TRUE), min_motor = min(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
-  kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
+  summarise(min_rape = min(Rape, na.rm = TRUE),min_assault = min(Assault, na.rm = TRUE),
+min_murder = min(Murder, na.rm = TRUE), 
+min_burglary = min(Data.Rates.Property.Burglary,na.rm = TRUE), 
+min_larceny = min(Data.Rates.Property.Larceny,na.rm = TRUE), 
+min_motor = min(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% 
+kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
 Recreating booktabs style table
@@ -341,7 +354,13 @@ min_motor
 </tbody>
 </table>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
-  summarise(max_rape = max(Rape, na.rm = TRUE),max_assault = max(Assault, na.rm = TRUE),max_murder = max(Murder, na.rm = TRUE), max_burglary = max(Data.Rates.Property.Burglary,na.rm = TRUE), max_larceny = max(Data.Rates.Property.Larceny,na.rm = TRUE), max_motor = max(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+  summarise(max_rape = max(Rape, na.rm = TRUE),
+max_assault = max(Assault, na.rm = TRUE),
+max_murder = max(Murder, na.rm = TRUE), 
+max_burglary = max(Data.Rates.Property.Burglary,na.rm = TRUE), 
+max_larceny = max(Data.Rates.Property.Larceny,na.rm = TRUE), 
+max_motor = max(Data.Rates.Property.Motor, na.rm = TRUE))%&gt;% 
+  kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -393,7 +412,12 @@ max_motor
 </tbody>
 </table>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
-  summarise(sd_rape = sd(Rape, na.rm = TRUE),sd_assault = sd(Assault, na.rm = TRUE),sd_murder = sd(Murder, na.rm = TRUE), sd_burglary = sd(Data.Rates.Property.Burglary,na.rm = TRUE), sd_larceny = sd(Data.Rates.Property.Larceny,na.rm = TRUE), sd_motor = sd(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+  summarise(sd_rape = sd(Rape, na.rm = TRUE),sd_assault = sd(Assault, na.rm = TRUE),
+sd_murder = sd(Murder, na.rm = TRUE),
+sd_burglary = sd(Data.Rates.Property.Burglary,na.rm = TRUE), 
+sd_larceny = sd(Data.Rates.Property.Larceny,na.rm = TRUE), 
+sd_motor = sd(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% 
+  kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -445,7 +469,9 @@ sd_motor
 </tbody>
 </table>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
-  summarise(variation_rape = var(Rape, na.rm = TRUE),variation_assault = var(Assault, na.rm = TRUE),variation_murder = var(Murder, na.rm = TRUE), variation_burglary = var(Data.Rates.Property.Burglary,na.rm = TRUE), variation_larceny = var(Data.Rates.Property.Larceny,na.rm = TRUE), variation_motor = var(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+  summarise(variation_rape = var(Rape, na.rm = TRUE),variation_assault = var(Assault, na.rm = TRUE),
+variation_murder = var(Murder, na.rm = TRUE), 
+variation_burglary = var(Data.Rates.Property.Burglary,na.rm = TRUE), variation_larceny = var(Data.Rates.Property.Larceny,na.rm = TRUE), variation_motor = var(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -497,7 +523,8 @@ variation_motor
 </tbody>
 </table>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
-  summarise(Distinct_Values_rape = n_distinct(Rape, na.rm = TRUE),Distinct_Values_assault = n_distinct(Assault, na.rm = TRUE),Distinct_Values_murder = n_distinct(Murder, na.rm = TRUE), Distinct_Values_burglary = n_distinct(Data.Rates.Property.Burglary,na.rm = TRUE), Distinct_Values_larceny = n_distinct(Data.Rates.Property.Larceny,na.rm = TRUE), Distinct_Values_motor = n_distinct(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+  summarise(Distinct_Values_rape = n_distinct(Rape, na.rm = TRUE),Distinct_Values_assault = n_distinct(Assault, na.rm = TRUE),Distinct_Values_murder = n_distinct(Murder, na.rm = TRUE), Distinct_Values_burglary = n_distinct(Data.Rates.Property.Burglary,na.rm = TRUE), Distinct_Values_larceny = n_distinct(Data.Rates.Property.Larceny,na.rm = TRUE), Distinct_Values_motor = n_distinct(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% 
+  kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -551,9 +578,9 @@ Distinct_Values_motor
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
   summarise(Quantile_rape = quantile(Rape, na.rm = TRUE),Quantile_assault = quantile(Assault, na.rm = TRUE),Quantile_murder = quantile(Murder, na.rm = TRUE), Quantile_burglary = quantile(Data.Rates.Property.Burglary,na.rm = TRUE), Quantile_larceny = quantile(Data.Rates.Property.Larceny,na.rm = TRUE), Quantile_motor = quantile(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark() %&gt;% footnote(general = &quot;Here are general comments of the table. &quot;,
-           number = c(&quot;First value for column  is at 0%; &quot;, &quot;Second value of for column is at 25%&quot;),
-           alphabet = c(&quot;Third value for column is at 50%; &quot;, &quot;Fourth value for column  is at 75%; &quot;),
-           symbol = c(&quot;Fifth value for column  is at 100% &quot;)
+number = c(&quot;First value for column  is at 0%; &quot;, &quot;Second value of for column is at 25%&quot;),
+alphabet = c(&quot;Third value for column is at 50%; &quot;, &quot;Fourth value for column  is at 75%; &quot;),
+symbol = c(&quot;Fifth value for column  is at 100% &quot;)
            )</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;border-bottom: 0;">
 <caption>
@@ -723,7 +750,8 @@ Quantile_motor
 </table>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
   group_by(Region) %&gt;%
-  summarise(mean_rape = mean(Rape, na.rm = TRUE),mean_assault = mean(Assault, na.rm = TRUE),mean_murder = mean(Murder, na.rm = TRUE), mean_burglary = mean(Data.Rates.Property.Burglary,na.rm = TRUE), mean_larceny = mean(Data.Rates.Property.Larceny,na.rm = TRUE), mean_motor = mean(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+  summarise(mean_rape = mean(Rape, na.rm = TRUE),mean_assault = mean(Assault, na.rm = TRUE),mean_murder = mean(Murder, na.rm = TRUE), mean_burglary = mean(Data.Rates.Property.Burglary,na.rm = TRUE), mean_larceny = mean(Data.Rates.Property.Larceny,na.rm = TRUE), mean_motor = mean(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% 
+  kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -851,7 +879,8 @@ West
 </table>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
   group_by(Region) %&gt;%
-  summarise(min_rape = min(Rape, na.rm = TRUE),min_assault = min(Assault, na.rm = TRUE),min_murder = min(Murder, na.rm = TRUE), min_burglary = min(Data.Rates.Property.Burglary,na.rm = TRUE), min_larceny = min(Data.Rates.Property.Larceny,na.rm = TRUE), min_motor = min(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+  summarise(min_rape = min(Rape, na.rm = TRUE),min_assault = min(Assault, na.rm = TRUE),min_murder = min(Murder, na.rm = TRUE), min_burglary = min(Data.Rates.Property.Burglary,na.rm = TRUE), min_larceny = min(Data.Rates.Property.Larceny,na.rm = TRUE), min_motor = min(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% 
+  kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -979,7 +1008,8 @@ West
 </table>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
   group_by(Region) %&gt;%
-  summarise(max_rape = max(Rape, na.rm = TRUE),max_assault = max(Assault, na.rm = TRUE),max_murder = max(Murder, na.rm = TRUE), max_burglary = max(Data.Rates.Property.Burglary,na.rm = TRUE), max_larceny = max(Data.Rates.Property.Larceny,na.rm = TRUE), max_motor = max(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+  summarise(max_rape = max(Rape, na.rm = TRUE),max_assault = max(Assault, na.rm = TRUE),max_murder = max(Murder, na.rm = TRUE), max_burglary = max(Data.Rates.Property.Burglary,na.rm = TRUE), max_larceny = max(Data.Rates.Property.Larceny,na.rm = TRUE), max_motor = max(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% 
+  kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -1363,7 +1393,8 @@ West
 </table>
 <pre class="r"><code>USArrestscombinedImportant %&gt;%
   group_by(Region) %&gt;%
-  summarise(Distinct_Values_rape = n_distinct(Rape, na.rm = TRUE),Distinct_Values_assault = n_distinct(Assault, na.rm = TRUE),Distinct_Values_murder = n_distinct(Murder, na.rm = TRUE), Distinct_Values_burglary = n_distinct(Data.Rates.Property.Burglary,na.rm = TRUE), Distinct_Values_larceny = n_distinct(Data.Rates.Property.Larceny,na.rm = TRUE), Distinct_Values_motor = n_distinct(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
+  summarise(Distinct_Values_rape = n_distinct(Rape, na.rm = TRUE),Distinct_Values_assault = n_distinct(Assault, na.rm = TRUE),Distinct_Values_murder = n_distinct(Murder, na.rm = TRUE), Distinct_Values_burglary = n_distinct(Data.Rates.Property.Burglary,na.rm = TRUE), Distinct_Values_larceny = n_distinct(Data.Rates.Property.Larceny,na.rm = TRUE), Distinct_Values_motor = n_distinct(Data.Rates.Property.Motor, na.rm = TRUE)) %&gt;% 
+  kbl(caption = &quot;Recreating booktabs style table&quot;) %&gt;%
   kable_classic(full_width = F, html_font = &quot;Cambria&quot;) %&gt;% kable_material_dark()</code></pre>
 <table class=" lightable-classic lightable-material-dark" style="font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto; font-family: &quot;Source Sans Pro&quot;, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
