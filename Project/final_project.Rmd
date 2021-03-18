@@ -192,3 +192,91 @@ cor(USArrestscombinedImportantCorrelation) %>%
   # Give title and labels
   labs(title = "Correlation matrix for State Crime Rates in 1973", x = "", y = "") 
 ```
+```{r}
+USArrestscombinedAnalysis <- USArrestscombinedImportantCorrelation
+USArrestscombinedAnalysis$State <- USArrestscombinedImportant$State
+USArrestscombinedAnalysis$Region <- USArrestscombinedImportant$Region
+#Split states based on Bureu of Economic Analysis Regions
+NewEngland <- c("Connecticut", "Maine", "Massachusetts", "New Hampshire", "Rhode Island","Vermont")
+MidEast <- c("Delaware", "District of Columbia", "Maryland", "New Jersey", "New York" ,"Pennsylvania")
+GreatLakes <-c("Illinois", "Indiana", "Michigan", "Ohio","Wisconsin")
+Plains <- c("Iowa", "Kansas", "Minnesota", "Missouri", "Nebraska", "North Dakota", "South Dakota")
+Southeast <- c( "Alabama", "Arkansas", "Florida", "Georgia", "Kentucky", "Louisiana", "Mississippi", "North Carolina", "South Carolina", "Tennessee", "Virginia","West Virginia")
+Southwest <- c("Arizona", "New Mexico", "Oklahoma","Texas")
+RockyMountain <- c("Colorado", "Idaho", "Montana", "Utah","Wyoming")
+FarWest <- c("Alaska", "California", "Hawaii", "Nevada", "Oregon","Washington")
+USArrestscombinedNumerical <- USArrestscombinedAnalysis %>% 
+  mutate(BureauRegion = case_when(State %in% NewEngland ~ "New England",
+                        State %in% FarWest  ~ "Far West",
+                        State %in% RockyMountain  ~ "Rocky Mountain",
+                        State %in% Southwest ~ "Southwest", 
+                        State %in% Southeast ~ "Southeast",
+                        State %in% Plains ~ "Plains",
+                        State %in% MidEast ~ "MidEast",
+                        State %in% GreatLakes ~ "Great Lakes",
+                        )) %>% arrange(desc(BureauRegion))
+options(scipen=999)
+library(ggplot2)
+theme_set(theme_bw())
+# Scatterplot
+gg <- ggplot(USArrestscombinedAnalysis, aes(x=Larceny, y=Burglary)) + 
+  geom_point(aes(col=Region)) + 
+  geom_smooth(method="loess", se=F) + 
+  xlim(c(0, 3500)) + 
+  ylim(c(0, 2000)) + 
+  labs(subtitle="Burglary Vs Larceny in the States in 1973", 
+       y="Larceny", 
+       x="Burglary", 
+       title="Scatterplot", 
+       caption = "Source: States")
+
+plot(gg)
+```
+```{r}
+options(scipen=999)
+library(ggplot2)
+theme_set(theme_bw())
+g <- ggplot(USArrestscombinedNumerical, aes(Region))
+g + geom_bar(aes(fill=BureauRegion), width = 0.5) +
+  theme(axis.text.x = element_text(angle=65, vjust=0.6)) +
+  labs(title="Categorywise Bar Chart",
+       subtitle="Manufacturer of vehicles",
+       caption="Source: Manufacturers from 'mpg' dataset")
+```
+```{r}
+library(ggplot2)
+g <- ggplot(USArrestscombinedNumerical, aes(BureauRegion, Murder))
+g + geom_boxplot(aes(fill=factor(Region)),outlier.colour = "red", outlier.shape = 1) + 
+  theme(axis.text.x = element_text(angle=65, vjust=0.6)) + 
+  labs(title="Distribution of Murder Rates in the States", 
+       subtitle="Murder Rates by BureauRegion and Region",
+       caption="Source: States",
+       x="Region",
+       y="Murder Rates per 100,000")
+```
+```{r}
+library(data.table)
+murderStatsBureauRegion <- as.data.table(USArrestscombinedNumerical)[, as.list(summary(Murder)), by = BureauRegion]
+murderStatsBureauRegion%>% kbl(caption = "Recreating booktabs style table") %>%
+  kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
+```
+
+```{r}
+library(data.table)
+murderStatsRegion <- as.data.table(USArrestscombinedNumerical)[, as.list(summary(Murder)), by = Region]
+murderStatsRegion%>% kbl(caption = "Recreating booktabs style table") %>%
+  kable_classic(full_width = F, html_font = "Cambria") %>% kable_material_dark()
+```
+```{r}
+library(ggplot2)
+theme_set(theme_classic())
+
+# Plot
+g <- ggplot(USArrestscombinedNumerical, aes(Larceny))
+g + geom_density(aes(fill=factor(BureauRegion)), alpha=0.8) + 
+    labs(title="Density plot", 
+         subtitle="City Mileage Grouped by Number of cylinders",
+         caption="Source: mpg",
+         x="City Mileage",
+         fill="# Cylinders")
+```
