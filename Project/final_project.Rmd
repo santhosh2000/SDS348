@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = 
 #### Introduction
 
 ##### The first dataset I chose was from the Vincentaelbuldock Github website  concentrated on violent crime rates by states in the United States in 1973 titled USArrests. This dataset contains 50 rows by 4 columns, with the 50 rows containing the 50 states of the United States and the 4 columns are respectively Murder, Assault, Rape, and UrbanPop. These columns are ratios of murders, assaults, and rapes commited per 100,000 people in each state. The Urbanpop column features the percentage of the urban population in each state. These ratios were taken from the data in McNeil's monograph in 1975. The second dataset I chose to possible combine with this dataset is from the Bureau of Justice Statistics database and these observations are taken from "local, county, state, tribal, and federal law enforcement agencies" who want to contribute to the FBI's effort to modernize the reports of national crime data. The second dataset contains 2752 rows by 21 columns, with the 2752 rows containing all of the possible 50 states (including the United States as a whole nation), reporting all 21 different crime rates (per 100,000 people in the state/nation) from 1960 to 2012. The 21 columns are State ,Year, Data.Population , rates per 100,000 people in each state for all property, burglary, larceny, motor,  assault, murder, and rape crimes for the various years.There are also 6-7 columns for total crimes related to property, burglary, larceny, motor, assault, murder, and rape crimes for the various years. There are also total columns adding up the total crimes per 100,000 for each criminal charge. From watching Forensic Files, Dateline, and other crime shows within the past year from quarantine, I'm interesting in see if there are any crimes that are correlated in 1973 ( the year of the Vietnam war) and a curiosity as to whether anti-Vietnam tensions may have affected the crime rates, as correlation does not simply imply causation. From the national news on crime statistics, I have an underyling belief that burglary and larceny rates may be correlated, somewhat, as many riots and thefts were occuring during the United States during that time frame. Murder is also a ratio which strikes me as an interesting ratio to study as well.
-####Tidy
+#### Tidy
 ```{r}
 #Import necessary packages
 library(readxl)
@@ -238,7 +238,7 @@ gg <- ggplot(USArrestscombinedAnalysis, aes(x=Larceny, y=Burglary)) +
 
 plot(gg)
 ```
-#### As noted by the correlation coefficient above a 0.5, the graph visually shows a rather strong correlation between Larceny and Burglary 
+#### As noted by the correlation coefficient above a 0.5, the graph visually shows a rather strong and positive non-linear correlation between Larceny and Burglary. There are relatively small residuals between the means and actual data points for burglary and larceny. There are no outliers and the plot exhibits slight grouping by different regions.
 ```{r}
 options(scipen=999)
 library(ggplot2)
@@ -250,6 +250,7 @@ ggplot(USArrestscombinedNumerical,aes(x=factor(Region),y=Larceny,colour=factor(B
        caption="Source: Larceny Rates from 'USArrestscombinedNumerical' dataset")
 
 ```
+
 ```{r}
 library(ggplot2)
 g <- ggplot(USArrestscombinedNumerical, aes(BureauRegion, Murder)) 
