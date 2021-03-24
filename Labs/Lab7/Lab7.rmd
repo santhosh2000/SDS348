@@ -1,0 +1,53 @@
+```{r}
+data <-c (8.029959, 1.822777, 2.991281, 5.482830, 6.195160, 6.203641, 2.240657,
+          7.828524, 6.709812, 12.668532, 13.652440, 6.172207, 6.532104, 8.349607,          2.372673, 1.679789, 8.562268, 2.825837, 10.773925, 5.481163, 2.315325,
+          2.443164, 4.130867, 3.928907, 2.943242, 4.561477, 3.726978, 6.335047,
+          4.765059, 11.939610, 8.479929, 2.857069, 6.864941, 8.284125, 5.411720,
+          14.994230, 5.314071, 3.020857, 14.034124, 9.195873)
+qsamp <- data %>% 
+  quantile(c(1:20/20))
+qsamp
+# Compare to theoretical deciles from the standard normal disribution
+qtheo <- qchisq(1:20/20,df=6)
+qtheo
+# Construct a Quantile-Quantile (Q-Q) plot to compare observed to theoretical quantiles
+data.frame(theoretical = qtheo, sample = qsamp) %>%
+  ggplot(aes(theoretical,sample)) +
+  # Plot data points
+  geom_point() +
+  # If perfect correspondence, the points would align on the line
+  geom_abline(slope = 1, intercept = 0)
+# qchisq <- data %>% 
+#   qchisq(1:20/20,df=2)
+# qchisq
+```
+```{r}
+options(pillar.sigfig=6)
+dataset <- PlantGrowth
+dataset$group <- as.character(dataset$group) 
+PlantGrowth_c2 <- dataset %>% filter(group == "ctrl" | group == "trt2")
+dataset_ctrl <- PlantGrowth_c2 %>% filter(group == "ctrl")
+dataset_trt2 <- PlantGrowth_c2 %>% filter(group == "trt2")
+obs_diff <- mean(dataset_ctrl$weight) - mean(dataset_trt2$weight)
+sample(1:10)
+sample(1:10, replace = TRUE)
+set.seed(348)
+sample(1:10)
+sample(1:10, replace = TRUE)
+
+
+```
+```{r}
+set.seed(348)
+sig_results <- c()
+
+for(i in 1:5000){
+  n = 64 # Sample size in each group
+  group1 <- rnorm(n, mean=0)
+  group2 <- rnorm(n, mean=.5)
+  pval <-  t.test(group1, group2, var.eq=T)$p.value
+  sig_results[i] <- pval < .05 # TRUE if significant, FALSE otherwise
+}
+
+mean(sig_results) # Estimate power (proportion of replicatins that detect the effect)
+```
