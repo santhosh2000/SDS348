@@ -199,20 +199,13 @@ for(i in 1:5000){
   samp1 <- sample(maleInsectWeights,replace = TRUE) 
   means_difference[i] <- mean(samp) - mean(samp1)
 }
-sd_diffs = sd(means_difference)
 mean_diff = mean(means_difference)
-error <- qt(0.975,df=30)*sd_diffs/sqrt(32)
-left <- mean_diff-error
-right <- mean_diff + error
-left
-right
 
 ```
 ```{r}
-t.test(weight ~ sex, data=mosquitoes, conf.level=.95)
+quantile(means_difference,c(.025,.975))
 ```
-
-*Your answer goes here. 1-2 sentences.*
+*The mean of the resulting distribution is 0.07023019. The 2.5% percentile is 0.03838343 and the 97.5% percentile is 0.10621980. We are 95% confident that the true difference between the weights of female and male mosquitoes lie between 0.0383838343 and 0.10621980 mg. *
 
 \newpage
 
