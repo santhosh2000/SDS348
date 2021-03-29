@@ -197,10 +197,19 @@ for(i in 1:5000){
   samp <- sample(femaleInsectWeights,replace = TRUE) 
   # Calculate and save the sample mean
   samp1 <- sample(maleInsectWeights,replace = TRUE) 
-  means_difference[i] <- mean(samp1) - mean(samp1)
+  means_difference[i] <- mean(samp) - mean(samp1)
 }
 sd_diffs = sd(means_difference)
+mean_diff = mean(means_difference)
+error <- qt(0.975,df=30)*sd_diffs/sqrt(32)
+left <- mean_diff-error
+right <- mean_diff + error
+left
+right
 
+```
+```{r}
+t.test(weight ~ sex, data=mosquitoes, conf.level=.95)
 ```
 
 *Your answer goes here. 1-2 sentences.*
