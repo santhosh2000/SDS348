@@ -2,8 +2,8 @@
 title: "HW 6"
 author: "SDS348 Spring 2021"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r global_options, include=FALSE}
@@ -317,7 +317,7 @@ adonis(dists ~ Site, data = pottery)
 
 ```{r}
 potteryDefined <- pottery %>% pivot_longer(c(`Al`,`Fe`,`Mg`,`Ca`,`Na`),names_to = "Chemical", values_to = "Content")
-ggplot(potteryDefined,aes(x=Content,y=Site,fill = Chemical)) + geom_bar(stat = "summary",fun = "mean") + geom_errorbar(stat = "summary", fun.data = "mean_se") + facet_wrap(vars(Chemical),scales = "free") + geom_errorbar(stat="summary",fun.data=mean_cl_boot)
+ggplot(potteryDefined,aes(x=Content,y=Site,fill = Chemical)) + geom_bar(stat = "summary",fun = "mean") + geom_errorbar(stat = "summary", fun.data = "mean_se") + facet_wrap(vars(Chemical),scales = "free") + geom_errorbar(stat="summary",fun.data=mean_cl_boot) + ggtitle("Distributions of Metal Abundance across Sites ")
 ```
 
 *There is the most noticeable difference in aluminum between Caldicot and AshleyRails compared to the other metals.*
