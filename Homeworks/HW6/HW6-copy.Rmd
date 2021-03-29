@@ -1,7 +1,9 @@
 ---
 title: "HW 6"
 author: "SDS348 Spring 2021"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r global_options, include=FALSE}
@@ -258,43 +260,67 @@ ncol(pottery)
 # Perform MANOVA with 2 response variables listed in cbind()
 manova <- manova(cbind(Al,Fe,Ca,Mg,Na) ~ Site, data = pottery)
 # OUtput of MANOVA
-summary(manova_iris)
+summary(manova)
 ```
 
-*Significant differences were found among the 4 sites for at least one of the chemical compositions(Pillai's trace = 0.92,pseudo F(4,294) = 63.852,p<0.0001).*
+*Significant differences were found among the 4 sites for at least one of the chemical compositions(Pillai's trace = 1.5539 ,pseudo F(15,60) = 4.2984,p<0.0001).*
 
 ##### 2.4 (2 pts) Now, let's investigate which of the elements differ by site. Report full ANOVA results for each metal variable. For the ones that differ, explore which sites are different, that is, perform posthoc t-tests for all significant ANOVAs using `pairwise.t.test(...,p.adj="none")` (*you do not have to write anything up about the post hoc tests for now*). 
-
 ```{r}
-# your code goes here (make sure to add comments)
+  summary.aov(manova)
+```
+*All the sites were found to differ significantly from each other in terms of Aluminum ( F(3,22) = 26.669, p <0.05).*
+*All the sites were found to differ significantly from each other in terms of Iron ( F(3,22) = 89.883, p <0.05).*
+*All the sites were found to differ significantly from each other in terms of Magnesium ( F(3,22) = 29.157, p <0.05).*
+*All the sites were found to differ significantly from each other in terms of Calcium ( F(3,22) = 49.12, p <0.05).*
+*All the sites were not found to differ significantly from each other in terms of Sodium ( F(3,22) = 9.5026, p < 0.05).*
+```{r}
+    # For Aluminum
+    pairwise.t.test(pottery$Al,pottery$Site, p.adj="none")
+    # For Iron
+    pairwise.t.test(pottery$Fe,pottery$Site, p.adj="none")
+    # For Magnesium
+    pairwise.t.test(pottery$Mg,pottery$Site, p.adj="none")
+    # For Calcium
+    pairwise.t.test(pottery$Ca,pottery$Site, p.adj="none")
+    # For Sodium
+    pairwise.t.test(pottery$Na,pottery$Site, p.adj="none")
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*At least one of the group means for chemical compositions differ by site.*
 
 ##### 2.5 (2 pts) Between 2.3 and 2.4, how many hypothesis tests have you done in total? What is the probability that you have made at least one type I error (i.e., what is the overall type-I error rate)? What (Bonferroni adjusted) significance level should you use if you want to keep the overall type I error rate at .05? Which of your post hoc tests that were significant before the adjustment are no longer significant?
 
 ```{r}
-# your code goes here (make sure to add comments)
+numTests <- 5 +5 + 1
+probTypeIError <- 1 - (0.95)^11
+BonferroniPepperonniLevel <- probTypeIError/numTests
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*I have done 11 hypothesis tests (5 Multi-ANOVA tests, 5 post-hoc tests, and one MANOVA test). The probability that I have made at least one type I error is 0.431199%. The Bonferroni significance level is 0.0391999. None of my post hoc tests were no longer significant when they were significant before the adjustment.*
 
 ##### 2.6 (1 pt) Let's now conduct a PERMANOVA test. Calculate the distances between each metal and each pot in the pottery dataset, using the function `dist`. Use the `adonis()` function from the `vegan` package to conduct PERMANOVA. Is the p-value larger or smaller than in the parametric MANOVA? Why might that be?
 
 ```{r}
 library(vegan)
-# your code goes here (make sure to add comments)
+dists <- pottery %>%
+  select(Al,Na,Ca,Fe,Mg) %>%
+  dist
+
+# Perform PERMANOVA on the distance matrix
+adonis(dists ~ Site, data = pottery)
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*The p-value is greater than the parametric MANOVA because there are no distributional assumptions, differences in variance and covariance are allowed, non-sensitivity to multicollineraity and outliers (0s), and allows more variables than samples.*
 
 ##### 2.7 (2 pts) Make the pottery dataset long by pivoting all of the element names into a column with all of the corresponding values into another column. Use that data to make a plot (mapping abundance to x, site to y), showing the average abundance of each element at each site with `geom_bar()` (using `stat = "summary", fun = "mean"`), adding standard errors (with `geom_errorbar(stat = "summary", fun.data = "mean_se")`) and then faceting by element (set scales='free'). (Add bootstrapped  with `geom_errorbar(stat="summary",fun.data=mean_cl_boot)`, or by computing them manually. *Hint: refer to HW2 for similar graphs.* For which element there is the most noticeable difference between one location compared to the others? 
 
 ```{r}
-# your code goes here (make sure to add comments)
+potteryDefined <- pottery %>% pivot_longer(c(`Al`,`Fe`,`Mg`,`Ca`,`Na`),names_to = "Chemical", values_to = "Content")
+ggplot(potteryDefined,aes(x=Content,y=Site,fill = Chemical)) + geom_bar(stat = "summary",fun = "mean") + geom_errorbar(stat = "summary", fun.data = "mean_se") + facet_wrap(vars(Chemical),scales = "free") + geom_errorbar(stat="summary",fun.data=mean_cl_boot)
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*There is the most noticeable difference in aluminum between Caldicot and AshleyRails compared to the other metals.*
 
 ------------------------------------------------------------------------
 
