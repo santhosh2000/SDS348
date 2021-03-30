@@ -1,0 +1,95 @@
+---
+title: "Lab 8"
+author: "SDS348 Spring 2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, R.options=list(max.print=100))
+
+# Edit the file starting below
+library(tidyverse)
+```
+
+
+```{r ANOVA}
+summary(aov(weight ~ group, data = PlantGrowth)) 
+```
+```{r}
+options(pillar.sigfig = 6) 
+dataset <- PlantGrowth
+PlantGrowth_ctrl <- dataset %>% filter(group == "ctrl") %>% summarize(mean(weight))
+PlantGrowth_trt1 <- dataset %>% filter(group == "trt1") %>% summarize(mean(weight))
+PlantGrowth_trt2 <- dataset %>% filter(group == "trt2") %>% summarize(mean(weight))
+PlantGrowth_trt2$`mean(weight)` - PlantGrowth_trt1$`mean(weight)`
+```
+#The largest difference is 0.865.
+```{r}
+pairwise.t.test(dataset$weight, dataset$group , p.adj="none")
+```
+#trt1 and trt2 have signficantly different weight.
+```{r}
+mymodel <- lm(weight ~ group, data = dataset)
+summary(mymodel)
+```
+#ctrl is the reference group.
+```{r}
+Yhat = 5.032 - .371*(0) + .494*(1)
+```
+#answer is 5.526.
+```{r}
+mymodel$fitted.values
+```
+#3 distinct values, they come from the linear regression equation.
+```{r}
+newmodel <- lm(weight ~ relevel(group, ref = "trt1"), data = PlantGrowth)
+summary(newmodel)
+```
+```{r}
+model.matrix(mymodel)
+```
+```{r}
+model.matrix(newmodel)
+```
+```{r}
+effect <- matrix(c(-1,1,0,-1,0,1), nrow = 3) 
+# Fit a new regression model
+mymodel2 <- lm(weight ~ group, data = PlantGrowth, contrasts = list(group = effect))
+# Check how the dummy variables were coded
+model.matrix(mymodel2)
+# Check the output
+summary(mymodel2) 
+```
+```{r}
+predict(mymodel2, newdata = data.frame(group = "trt1"))
+```
+```{r}
+mycarmodel <- lm(mpg ~ wt + cyl + hp + factor(am), data = mtcars)
+summary(mycarmodel)
+```
+#Weight is the only significant factor that contributed to fuel efficiency. It's the only variable with a p-value less than 0.05.
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg, color = factor(am))) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE, fullrange = TRUE)
+```
+```{r}
+mycarmodel2 <- lm(mpg ~ cyl + hp + wt * factor(am), data = mtcars)
+summary(mycarmodel2)
+```
+```{r}
+mtcars %>% 
+  mutate(wt_cat = case_when(
+    wt < median(wt) ~ "low",
+    wt >= median(wt) ~ "high")) %>%
+  ggplot(aes(x = hp, y = mpg, color = wt_cat)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE, fullrange = TRUE)
+```
+```{r}
+mycarmodel3 <- lm(mpg ~ cyl + wt * hp + factor(am), data = mtcars)
+summary(mycarmodel3)
+```
+#Both interaction terms were significant. 
