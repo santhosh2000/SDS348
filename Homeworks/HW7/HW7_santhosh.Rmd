@@ -1,0 +1,134 @@
+---
+title: "HW 7"
+author: "SDS348 Spring 2021"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, R.options=list(max.print=100))
+
+# Edit the file starting below
+
+library(tidyverse)
+```
+
+## Name: Santhosh Saravanan
+## EID: sks3648
+
+**This homework is due on April 5, 2021 at 8am. Submit a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+------------------------------------------------------------------------
+
+### Question 1: (13 pts)
+
+#### Recall the built-in dataset `msleep` (in `ggplot2`) about the sleeping habits and other characteristics of 83 mammals.
+
+##### 1.1 (3 pts) Fit a regression model with the REM sleep (`sleep_rem`, in hours) as the response, and use the variables for brain weight (`brainwt` in kg) and the type of diet (`vore`) as predictors, as well as their interaction. Interpret **in context** (regardless of the significance of the coefficient estimates):
+###### a. the intercept,   
+###### b. the coefficient of `brainwt`,   
+###### c. the coefficient for `voreinsecti`,  
+###### d. the coefficient for `brainwt:voreinsecti`.
+
+```{r}
+library(ggplot2)
+# Fit a multiple linear regression model with both predictors
+fit <- lm(sleep_rem ~ brainwt + vore + brainwt*vore, data = msleep)
+summary(fit)
+
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+##### 1.2 (3 pts) Fit the same regression model as previously, but center the `brainwt` variable first by subtracting the mean to each observation (using `na.rm = TRUE`). Which coefficients that you interpreted in the previous question (1.1) have changed? Why? Reinterpret any coefficient from question 1.1 that has changed.
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*  
+
+
+##### 1.3 (3 pts) Remove missing values for the `vore` variable only. Make a plot of `sleep_rem` by `brainwt` and explore the relationship between these two variables for different types of diets (using color and `geom_smooth(method = "lm")`). To make it more readable, set the limits of x-axis between 0 and 1.4 (using `xlim(,)`). What is the mean value of brain weight? Does it make sense to interpret the coefficient estimate of insectivores in terms of the mean value of brain weight? Why/Why not?
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+##### 1.4 (2 pts) Consider the natural log of the variable `brainwt`, then center the log variable (*Note: you can’t just take the log of the centered variable*) and then fit a model with that centered log variable, the `vore` variable, and the interaction. Interpret the most significant effect and discuss your decision with respect to the null hypothesis.
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+##### 1.5 (2 pts) Update your plot from question 1.3 by representing the centered log brain weight on the x-axis. The interaction between the centered log brain weight and which type of diet seem to be the most important? Refer to the previous question to check for significance.
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+### Question 2: (12 pts)
+
+#### Recall the built-in dataset `ChickWeight` about the weights (in grams) of chicks on 4 different diets over time (at 2-day intervals).
+
+
+##### 2.1 (2 pts) In HW2, question 2.7, you created a scatterplot, representing the weight of chicks over time, and fitting a regression line for each diet. Recreate the graph below. What do you expect in terms of interaction between time and type of diet?
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+##### 2.2 (2 pts) Fit a regression model to predict weights of chicks based on the number of days since birth and on the type of diet, including the interaction. Notice that the individual effects of the different diets were not significant while the interactions between types of diets and time are. Why is that so?
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+##### 2.3 (3 pts) Check the assumptions visually for the regression model created in question 2.2. Which assumption(s) may or may not be met?
+
+```{r}
+# your code goes here (make sure to add comments) 
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+##### 2.4 (2 pts) Using the regression model from question 2.2, construct a confidence interval for the mean weight of a chick after 15 days following Diet 1 (Note: create a `newdata` with the values to plug in the model and use `predict`). Interpret the confidence interval. 
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+##### 2.5 (3 pts) Bootstrap methods can be used in pretty much any situation and are particularly of interest for calculating a confidence interval when some of the assumptions are not met. Create 5000 bootstrap samples (you can use a `for` loop or the function `replicate`) where the weight is sampled with replacement. For each bootstrap sample, fit a regression model (predicting weight based on time and diet, with the interaction effect) and calculate the mean weight of a chick after 15 days following Diet 1 (using `predict`). Using the empirical distribution of these mean weights, find the bootstrap 95% confidence interval for the mean weight of a chick after 15 days following Diet 1. How is this confidence interval different from the confidence interval in question 2.4?
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+------------------------------------------------------------------------
+
+```{r, echo=F}
+## DO NOT DELETE THIS BLOCK!
+Sys.info()
+```
