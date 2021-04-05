@@ -164,10 +164,11 @@ bptest(fit)
 ##### 2.4 (2 pts) Using the regression model from question 2.2, construct a confidence interval for the mean weight of a chick after 15 days following Diet 1 (Note: create a `newdata` with the values to plug in the model and use `predict`). Interpret the confidence interval. 
 
 ```{r}
-# your code goes here (make sure to add comments)
+timeDietMatrix <-  data.frame(Time=15,Diet="1")
+predict(fit,newdata = timeDietMatrix,interval = "confidence")
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*We are 95% confident that the true chick weight for the mean weight of a chick after 15 days following Diet 1 lies between 128.1267g and 138.9891g.*
 
 
 ##### 2.5 (3 pts) Bootstrap methods can be used in pretty much any situation and are particularly of interest for calculating a confidence interval when some of the assumptions are not met. Create 5000 bootstrap samples (you can use a `for` loop or the function `replicate`) where the weight is sampled with replacement. For each bootstrap sample, fit a regression model (predicting weight based on time and diet, with the interaction effect) and calculate the mean weight of a chick after 15 days following Diet 1 (using `predict`). Using the empirical distribution of these mean weights, find the bootstrap 95% confidence interval for the mean weight of a chick after 15 days following Diet 1. How is this confidence interval different from the confidence interval in question 2.4?
