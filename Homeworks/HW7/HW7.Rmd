@@ -56,10 +56,15 @@ diffInsectiHerbi <- yInsectivore - yHerbivore
 ##### 1.2 (3 pts) Fit the same regression model as previously, but center the `brainwt` variable first by subtracting the mean to each observation (using `na.rm = TRUE`). Which coefficients that you interpreted in the previous question (1.1) have changed? Why? Reinterpret any coefficient from question 1.1 that has changed.
 
 ```{r}
-# your code goes here (make sure to add comments)
+mySleep$brainwt <- mySleep$brainwt - mean(mySleep$brainwt,na.rm = TRUE)
+fit <- lm(sleep_rem ~ brainwt + vore + brainwt*vore, data = mySleep)
+summary(fit)
+
 ```
 
-*Your answer goes here. 1-2 sentences.*  
+*a.The mean REM sleep is 1.7204 hours if an animal has 0kg of brainweight and is a carnivore.*
+*b. The mean REM sleep decreases by 3.42607 hours with every unit increase in brainweight and if an animal is a carnivore.*
+*c. The mean REM sleep increases by 12.9163 hours if an animal has 0kg of brain weight and is an insectivore.* 
 
 
 ##### 1.3 (3 pts) Remove missing values for the `vore` variable only. Make a plot of `sleep_rem` by `brainwt` and explore the relationship between these two variables for different types of diets (using color and `geom_smooth(method = "lm")`). To make it more readable, set the limits of x-axis between 0 and 1.4 (using `xlim(,)`). What is the mean value of brain weight? Does it make sense to interpret the coefficient estimate of insectivores in terms of the mean value of brain weight? Why/Why not?
