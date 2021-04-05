@@ -98,10 +98,13 @@ summary(fit)
 ##### 1.5 (2 pts) Update your plot from question 1.3 by representing the centered log brain weight on the x-axis. The interaction between the centered log brain weight and which type of diet seem to be the most important? Refer to the previous question to check for significance.
 
 ```{r}
-# your code goes here (make sure to add comments)
+mySleep <- msleep
+mySleep$brainwt <- log(mySleep$brainwt)
+mySleep$brainwt <- mySleep$brainwt - mean(mySleep$brainwt,na.rm = TRUE)
+mySleep %>% drop_na(vore) %>% ggplot(aes(brainwt,sleep_rem))+ geom_smooth(aes(col=vore),method="lm")
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*The interaction between the centered log brain weight and the insectivore diet seem to be the most important*
 
 
 ### Question 2: (12 pts)
