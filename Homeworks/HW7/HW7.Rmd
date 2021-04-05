@@ -74,7 +74,7 @@ summary(fit)
 mySleep <- msleep
 mySleep <- mySleep[!is.na(mySleep$vore),]
 ggplot(mySleep,aes(y=sleep_rem,x=brainwt,color=vore)) + 
-  geom_point() + xlim(0,1.4) + geom_smooth(method = "lm") + xlab("Brain weight (kg)") + ylab("REM Sleep (hours)")
+  geom_point() + xlim(0,1.4) + geom_smooth(method = "lm") + xlab("Brain weight (kg)") + ylab("REM Sleep (hours)") + ggtitle("Rem Sleep vs Brain Weight")
 print(mean(mySleep$brainwt,na.rm = TRUE))
 ```
 
@@ -101,7 +101,7 @@ summary(fit)
 mySleep <- msleep
 mySleep$brainwt <- log(mySleep$brainwt)
 mySleep$brainwt <- mySleep$brainwt - mean(mySleep$brainwt,na.rm = TRUE)
-mySleep %>% drop_na(vore) %>% ggplot(aes(brainwt,sleep_rem))+ geom_smooth(aes(col=vore),method="lm")
+mySleep %>% drop_na(vore) %>% ggplot(aes(brainwt,sleep_rem))+ geom_smooth(aes(col=vore),method="lm") + ggtitle("Rem Sleep vs Diet") + xlab("Diet Type") + ylab("Rem Sleep (hrs)")
 ```
 
 *The interaction between the centered log brain weight and the insectivore diet seem to be the most important*
@@ -115,10 +115,10 @@ mySleep %>% drop_na(vore) %>% ggplot(aes(brainwt,sleep_rem))+ geom_smooth(aes(co
 ##### 2.1 (2 pts) In HW2, question 2.7, you created a scatterplot, representing the weight of chicks over time, and fitting a regression line for each diet. Recreate the graph below. What do you expect in terms of interaction between time and type of diet?
 
 ```{r}
-# your code goes here (make sure to add comments)
+ggplot(data=ChickWeight,aes(x=`Time`,y=`weight`,color = Diet)) + geom_point(size=1.5)+ggtitle("Chicken Weight vs Time") + labs(y="Chicken Weight(g)",x="Tiem (days)") + geom_smooth(method = "lm",aes(color = Diet)) 
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*I expect a somewhat reasonable correlation between time and type of diet.*
 
 
 ##### 2.2 (2 pts) Fit a regression model to predict weights of chicks based on the number of days since birth and on the type of diet, including the interaction. Notice that the individual effects of the different diets were not significant while the interactions between types of diets and time are. Why is that so?
