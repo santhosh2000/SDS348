@@ -124,10 +124,11 @@ ggplot(data=ChickWeight,aes(x=`Time`,y=`weight`,color = Diet)) + geom_point(size
 ##### 2.2 (2 pts) Fit a regression model to predict weights of chicks based on the number of days since birth and on the type of diet, including the interaction. Notice that the individual effects of the different diets were not significant while the interactions between types of diets and time are. Why is that so?
 
 ```{r}
-# your code goes here (make sure to add comments)
+fit <- lm(weight ~ Time + Diet + Time*Diet, data = ChickWeight)
+summary(fit)
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*The distinctive means from the different diets cross over each other in different situations. This is known as a cross-over interaction. The different factors of diet have one kind of effect on weight for one condition, but have an opposite effect on weight for another condition*
 
 
 ##### 2.3 (3 pts) Check the assumptions visually for the regression model created in question 2.2. Which assumption(s) may or may not be met?
