@@ -134,11 +134,32 @@ summary(fit)
 ##### 2.3 (3 pts) Check the assumptions visually for the regression model created in question 2.2. Which assumption(s) may or may not be met?
 
 ```{r}
-# your code goes here (make sure to add comments) 
+# Residuals vs Fitted values plot
+plot(fit, which = 1)
+# Histogram of residuals
+hist(fit$residuals)
+# Q-Q plot for the residuals
+plot(fit, which = 2)
+```
+```{r normal}
+shapiro.test(fit$residuals)
+# Kolmogorov-Smirnov test
+# H0: normality
+ks.test(fit$residuals, "pnorm", mean=0, sd(fit$residuals))
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*Normality assumption has not been met because even though there isn't a pattern in the residuals, not all of the points lie on the straight line in the QQ plot. Also the Shapiro-Wilk Test fails for the residuals so the residuals originated from a non-normal distribution. The Kolmogorov-Smirnov test fails to reject the null hypothesis that the distribution of the residuals follow the normal distribution. All in all, I believe the normality assumption has not been met.*
+```{r homoscedasticity}
+library(sandwich);
+# Install a new package
+# install.packages("lmtest")
+library(lmtest)
 
+# Breusch-Pagan test
+# H0: homoscedasticity
+bptest(fit) 
+```
+*The equal variance assumption has barely been met with the results of the Breusch-Pagan test.*
 
 ##### 2.4 (2 pts) Using the regression model from question 2.2, construct a confidence interval for the mean weight of a chick after 15 days following Diet 1 (Note: create a `newdata` with the values to plug in the model and use `predict`). Interpret the confidence interval. 
 
