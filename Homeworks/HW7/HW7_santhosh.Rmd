@@ -30,8 +30,7 @@ library(tidyverse)
 ###### b. the coefficient of `brainwt`,   
 ###### c. the coefficient for `voreinsecti`,  
 ###### d. the coefficient for `brainwt:voreinsecti`.
-
-```{r}
+```{r msleep}
 library(ggplot2)
 # Fit a multiple linear regression model with both predictors
 fit <- lm(sleep_rem ~ brainwt + vore + brainwt*vore, data = msleep)
@@ -39,7 +38,20 @@ summary(fit)
 
 ```
 
-*Your answer goes here. 1-2 sentences.*
+
+*a.The mean REM sleep is 2.68511 hours if an animal has 0kg of brainweight and is a carnivore.*
+*b. The mean REM sleep decreases by 3.42607 hours with every unit increase in brainweight and if an animal is a carnivore.*
+*c. The mean REM sleep decreases by 0.04121 hours if an animal has 0kg of brain weight and is an insectivore.* 
+```{r}
+yInsectivore <- 2.68511 - 3.42607 - 0.04121 + 46.01707 # if animal is an insectivore
+yHerbivore <- 2.68511 - 3.42607 - 1.20881 + 1.42876 # if animal isa herbivore
+yCarnivore <- 2.68511 - 3.42607  # if animal is a carnivore
+yOmnivore <- 2.68511 - 3.42607 - 0.58505 + 2.94134
+diffInsectiOmni <- yInsectivore - yOmnivore
+diffInsectiCarni <- yInsectivore - yCarnivore
+diffInsectiHerbi <- yInsectivore - yHerbivore
+```
+*d. The difference in mean REM sleep is 43.39962 hours if an animal is an insectivore compared to when an animal is an Omnivore. The difference in mean REM sleep is 45.97586 hours if an animal is an insectivore compared to when an animal is a carnivore. The difference in mean REM sleep is 45.75591 hours if an animal is an insectivore compared to when an animal is a herbivore.*
 
 ##### 1.2 (3 pts) Fit the same regression model as previously, but center the `brainwt` variable first by subtracting the mean to each observation (using `na.rm = TRUE`). Which coefficients that you interpreted in the previous question (1.1) have changed? Why? Reinterpret any coefficient from question 1.1 that has changed.
 
