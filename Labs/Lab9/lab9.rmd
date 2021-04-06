@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = 
 # Edit the file starting below
 library(tidyverse)
 ```
-#Welcome to Santhosh's Hell Journey. If you make it through this document, you will fell my cold clammy hands around your neck, strangling you in the name of Father Chungus. Let's begin.
+#Welcome to Santhosh's Hell Journey. If you make it through this document, you will feel my cold clammy hands around your neck, strangling you in the name of Father Chungus. Let's begin.
 ```{r}
 fit <- glm(am ~ wt, data = mtcars, family = "binomial")
 summary(fit)
