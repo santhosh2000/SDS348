@@ -1,0 +1,85 @@
+---
+title: "Lab 9"
+author: "SDS348 Spring 2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+#BRO THIS LAB IS ACTUAL CANCER
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, R.options=list(max.print=100))
+
+# Edit the file starting below
+library(tidyverse)
+```
+#Welcome to Santhosh's Hell Journey. If you make it through this document, you will fell my cold clammy hands around your neck, strangling you in the name of Father Chungus. Let's begin.
+```{r}
+fit <- glm(am ~ wt, data = mtcars, family = "binomial")
+summary(fit)
+```
+#Answer to 1 is yes and the effect is positive.
+#answer to 1 is C.
+#2 
+```{r}
+exp(coef(fit))
+#Answer to 2 is 0.01788183
+```
+```{r}
+percentDecrease <- (0.01799*100-100)
+#Answer to 3 is 98.201.
+```
+```{r}
+fit <- glm(am ~ wt, data = mtcars, family = "binomial")
+summary(fit)
+model <- exp(12.040)*exp(-4.024*3)
+#Answer to 4 is 0.9685.
+```
+```{r}
+predict(fit, newdata = data.frame(wt = 3), type = "response")
+#Answer to 5 is 0.492.
+```
+```{r}
+titanic <- read.csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//TitanicSurvival.csv")
+titanic <-titanic %>% 
+  as.data.frame %>%
+  mutate(y = ifelse(survived == "yes", 1, 0)) %>%
+  rename(class = passengerClass)
+```
+```{r}
+sucDeezNuts <- glm(y ~ class, data = titanic, family = "binomial")
+summary(sucDeezNuts)
+#1st class is the reference group (Answer to Question 6).
+```
+
+```{r}
+#For First class
+probFirstClass <- exp(0.4861)/(1-exp(0.4861))
+probThirdClass <- (exp(0.4861) * exp(-1.5567))/(1-(exp(0.4861)*exp(-1.5568)))
+ratio <- probFirstClass/probThirdClass
+#Ratio is about 4.743, so go figure. ( answer to question 7 is 4.743).
+```
+```{r}
+#Question 8 
+full_fit <- glm(y ~ class + age + sex, data = titanic, family = "binomial")
+summary(full_fit)
+predict(full_fit,newdata = data.frame(age = 50, sex = "male", class = "2nd"),type = "response")
+#Answer to Question 8 is 0.121.
+```
+```{r}
+titanic$prob <- predict(full_fit, newdata = titanic, type = "response")
+titanic$predicted <- ifelse(titanic$prob > .8, 1, 0)
+table(actual = titanic$y, prediction = titanic$predicted)
+```
+```{r}
+#previous values were 0.704918 and 0.8400646
+#Sensitivity decreases and specificity increases for Question #9
+# sensitivity
+mean(titanic[titanic$y == 1,]$prob > .8, na.rm = TRUE)
+# specificity
+mean(titanic[titanic$y == 0,]$prob <= .8, na.rm = TRUE)
+```
+```{r}
+#Answer to Question 10 is 0.8, the higher the alpha, the higher the power, the less likelihood of committing a type I error. gg 
+```
+# I hope you enjoyed the ride. Feel my hands erase your soul and suck you up like a buttercup . Amen to WongChungus
