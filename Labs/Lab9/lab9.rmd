@@ -54,7 +54,8 @@ summary(sucDeezNuts)
 
 ```{r}
 #For First class
-probFirstClass <- exp(0.4861)/(1-exp(0.4861))
+probFirstClass <- predict(sucDeezNuts,newdata = data.frame(class = "1st"),type = "response")
+oddsRatioFirstClass <- probFirstClass/(1-probFirstClass)
 probThirdClass <- (exp(0.4861) * exp(-1.5567))/(1-(exp(0.4861)*exp(-1.5568)))
 ratio <- probFirstClass/probThirdClass
 #Ratio is about 4.743, so go figure. ( answer to question 7 is 4.743).

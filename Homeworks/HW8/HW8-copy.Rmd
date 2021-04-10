@@ -1,0 +1,152 @@
+---
+title: "HW 8"
+author: "SDS348 Spring 2021"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, R.options=list(max.print=100))
+
+# Edit the file starting below
+
+library(tidyverse)
+library(ggplot2)
+library(plotROC)
+```
+
+## Enter your name and EID here
+
+**This homework is due on April 12, 2021 at 8am. Submit a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+------------------------------------------------------------------------
+
+#### In this assignment, we will analyze some data from a famous case of alleged gender discrimination in admission to graduate programs at UC Berkeley in 1973. The three variables in the dataset are:
+
+-   `Admit`: Admitted, Rejected\
+-   `Gender`: Male, Female\
+-   `Dept`: Departments A, B, C, D, E, F
+
+```{r}
+admissions <- read.csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//admissions.csv")
+```
+
+### Question 1: (7 pts)
+
+##### 1.1 (1 pt) First, create a dichotomous outcome variable `y` that is 1 if admitted, 0 otherwise. What percentage of the applicants were admitted?
+
+```{r}
+admissions <- admissions %>%
+  mutate(y = ifelse(Admit == "Admitted", 1, 0)) 
+table(admissions$y)
+print(1755/(1755+2771))
+```
+
+*About 38.77596% of people were admitted to graduate programs at UC Berkeley in 1973.*
+
+##### 1.2 (3 pts) Predict `y` from `Gender` using a logistic regression. Is the effect significant? Interpret the effect: what is the odds ratio for admission to graduate school for women compared to men? What is the predicted probability of admission for a female applicant? for a male applicant?
+
+```{r Gender}
+fit1 <- glm(y ~ Gender, data = admissions, family = "binomial")
+summary(fit1)
+```
+```{r}
+exp(coefficients(fit1))
+oddsRatioWomenMen <- 1/1.8410800
+```
+```{r}
+predict(fit1,newdata = data.frame(Gender="Female"),type = "response")
+predict(fit1,newdata = data.frame(Gender="Male"),type = "response")
+```
+*If you were a male applicant who applied to the graduate program at UC Berkeley in 1973 versus being a female applicant, changes the log odds of admission by 1.84108 and this is a significant effect (p-value < 0.05). There is a significant effect of gender on the probability of getting admitted to the graduate school at UC Berkeley. The odds of acceptance to a graduate school program at UC Berkeley for female students is 0.54316 times what they are for male applicants.The predicted probability of admission for a female applicant is 30.35422% and the predicted probability of admissions for a male applicant is 44.51877%. *
+
+##### 1.3 (3 pts) Predict `y` from `Dept` using a logistic regression. Which department(s) had a significant effect on admission? For which departments are odds of admission higher than department A? Which departments are the most selective? the least selective?
+
+```{r}
+fit2 <- glm(y ~ Dept, data = admissions, family = "binomial")
+summary(fit2)
+```
+```{r}
+exp(coefficients(fit2))
+oddsRatioAB <- 1/0.95066362
+oddsRatioAC <- 1/0.29845113
+oddsRatioAD <- 1/0.28412811
+oddsRatioAE <- 1/0.18582302
+oddsRatioAF <- 1/0.03804039
+```
+```{r}
+predict(fit2,newdata = data.frame(Dept="B"),type = "response")
+predict(fit2,newdata = data.frame(Dept="C"),type = "response")
+predict(fit2,newdata = data.frame(Dept="D"),type = "response")
+predict(fit2,newdata = data.frame(Dept="E"),type = "response")
+predict(fit2,newdata = data.frame(Dept="F"),type = "response")
+```
+*Departments C, D, E, and F all  a significant effect on admission (p-values < 0.05). None of this departments have an odds of admission higher than department A as their odds ratio ( A to C,D,E, and F) are all greater than 1. The most selective departments are F, E, D, and C. The least selective department is B.*
+
+### Question 2: (7 pts)
+
+##### 2.1 (3 pts) Predict `y` from both `Gender` and `Dept` using a logistic regression. Interpret the coefficient for `Gender`. Controlling for the different departments, is there a significant effect of Gender on admissions? What is the corresponding odds ratio? What can you say about departments A and B compared to the other departments?
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+##### 2.2 (4 pts) Predict `y` from both `Gender` and `Dept` using a logistic regression and include an *interaction* term. Compute the odds ratio for admission (Male vs. Female) in each department (A through F). Which departments favor male applicants (i.e., higher odds of admission for `Male`)?
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+### Question 3: (5 pts)
+
+##### 3.1 (1 pt) According to the Akaike information criterion (AIC), which of the four models we created to predict `y` seem to be a better fit?
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+##### 3.2 (1 pt) According to the analysis of deviance below, which of the three models included seem to significantly lower the deviance?
+
+```{r}
+anova(fit_d, fit_gd, fit_gdi, test = "LRT")
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+##### 3.3 (3 pts) Consider the model that you believe has the best fit (you can use the two previous questions to help you decide which of the four models it should be!). Save the predicted probabilities of admission for each applicant in the `admission` dataset. Plot the ROC curve and compute the AUC. Using the rules of thumb discussed in lecture, what does the area under the curve indicates?
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+### Question 4: (6 pts)
+
+##### 4.1 (4 pts) Using `dplyr` functions on the dataset `admissions`, create a dataframe with counts of applicants of each gender in each department (e.g., number of males who applied to department A) and also the percent of applicants admitted of each gender in each department. Sort the count variable in descending order. What top 2 departments did the majority of women apply to? What about the majority of men? What about the respective selectivity (percent of admitted applicants) in these departments?
+
+```{r}
+# your code goes here (make sure to add comments)
+```
+
+*Your answer goes here. 1-2 sentences.*
+
+
+##### 4.2 (2 pts) Review the first example from the [Wikipedia article](https://en.wikipedia.org/wiki/Simpson%27s_paradox) about the Simpson's  paradox. Write a conclusion for this assignment.
+
+*Your answer goes here. 1-2 sentences.*
+
+
+```{r, echo=F}
+## DO NOT DELETE THIS BLOCK!
+Sys.info()
+```
