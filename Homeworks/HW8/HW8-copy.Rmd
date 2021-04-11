@@ -181,15 +181,20 @@ calc_auc(ROCplot)
 ##### 4.1 (4 pts) Using `dplyr` functions on the dataset `admissions`, create a dataframe with counts of applicants of each gender in each department (e.g., number of males who applied to department A) and also the percent of applicants admitted of each gender in each department. Sort the count variable in descending order. What top 2 departments did the majority of women apply to? What about the majority of men? What about the respective selectivity (percent of admitted applicants) in these departments?
 
 ```{r}
-# your code goes here (make sure to add comments)
+chunks <- admissions %>% select(Dept,Gender) %>% count(Gender,Dept) %>% group_by(Dept)
+sampleFrame <- admissions %>% count(y,Gender,Dept) %>% filter(y == 1)
+sampleFrame$totalNum <- chunks$n
+sampleFrame <- sampleFrame %>% mutate(Admitted=n/totalNum)
+chunks$Admitted <- sampleFrame$Admitted
+chunks <- rename(chunks,count = n)
+chunks <- chunks[order(chunks$count, decreasing = TRUE),] 
+rm(sampleFrame)
 ```
-
-*Your answer goes here. 1-2 sentences.*
-
+*Departments C and E were the two departments that a majority of women applied to. The majority of men applied to Departments A and B. The two departments with high selectivity rates were Departments A and B. The two departments with the lowest selectivity rates were Departments E and F.*
 
 ##### 4.2 (2 pts) Review the first example from the [Wikipedia article](https://en.wikipedia.org/wiki/Simpson%27s_paradox) about the Simpson's  paradox. Write a conclusion for this assignment.
 
-*Your answer goes here. 1-2 sentences.*
+*With respect to this paradox, men applying to these departments were more likely to be admitted compared to their women counterparts. There is a massive disparity between the admit rates compared to men and women when taking into account the Admited column rates ( 62% compared to 34%).*
 
 
 ```{r, echo=F}
