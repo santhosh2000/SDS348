@@ -146,27 +146,34 @@ OddsDeptFMaleFemale <- OddsDeptFMale/OddsDeptFFemale
 ##### 3.1 (1 pt) According to the Akaike information criterion (AIC), which of the four models we created to predict `y` seem to be a better fit?
 
 ```{r}
-# your code goes here (make sure to add comments)
+AIC(fit1,fit2,fit3,fit4)
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*The smaller the AIC, the better the fit. In this case, the model from 2.2 is the best fit.*
 
 ##### 3.2 (1 pt) According to the analysis of deviance below, which of the three models included seem to significantly lower the deviance?
 
 ```{r}
-anova(fit_d, fit_gd, fit_gdi, test = "LRT")
+anova(fit4, fit3, fit2, test = "LRT")
+anova(fit4,fit3,fit1,test = "LRT")
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*Fit 1 seemed to significantly lower the deviance.*
 
 
 ##### 3.3 (3 pts) Consider the model that you believe has the best fit (you can use the two previous questions to help you decide which of the four models it should be!). Save the predicted probabilities of admission for each applicant in the `admission` dataset. Plot the ROC curve and compute the AUC. Using the rules of thumb discussed in lecture, what does the area under the curve indicates?
 
 ```{r}
 # your code goes here (make sure to add comments)
+admissions$prob <- predict(fit4, type = "response")
+ROCplot <- ggplot(admissions) + 
+  geom_roc(aes(d = y, m = prob), n.cuts = 0)
+ROCplot
+# Calculate AUC
+calc_auc(ROCplot)
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*The AUC is the overall measure of model performance  as the higher the area under the curve, the better prediction power the model has. According to the rule of thumb, the model is fair in terms of its prediction power as the AUC score is between 0.7 and 0.8.*
 
 
 ### Question 4: (6 pts)
