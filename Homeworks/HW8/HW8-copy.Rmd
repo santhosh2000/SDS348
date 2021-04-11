@@ -89,19 +89,58 @@ predict(fit2,newdata = data.frame(Dept="F"),type = "response")
 ##### 2.1 (3 pts) Predict `y` from both `Gender` and `Dept` using a logistic regression. Interpret the coefficient for `Gender`. Controlling for the different departments, is there a significant effect of Gender on admissions? What is the corresponding odds ratio? What can you say about departments A and B compared to the other departments?
 
 ```{r}
-# your code goes here (make sure to add comments)
+fit3 <- glm(y ~ Dept + Gender, data = admissions, family = "binomial")
+summary(fit3)
+exp(coefficients(fit3))
 ```
 
-*Your answer goes here. 1-2 sentences.*
+*If you were a male applicant who applied to the graduate program at UC Berkeley in 1973 versus being a female applicant, changes the log odds of admission by 0.9049551 and this is not a significant effect (p-value >  0.05). However, controlling for departments as we saw in the previous problem, there is a  significant effect of Gender on admissions. Departments A and B don't have a significant effect on admissions when either controlling for Gender and not controlling for Gender (p-values < 0.05).One can hypothesize that Departments A and B are less selective than the other respective departments. This conclusion can further be reached with the odds of admission for Departments C, D, E, and F being much lower than Department A (reference group) and B.*
 
 ##### 2.2 (4 pts) Predict `y` from both `Gender` and `Dept` using a logistic regression and include an *interaction* term. Compute the odds ratio for admission (Male vs. Female) in each department (A through F). Which departments favor male applicants (i.e., higher odds of admission for `Male`)?
 
 ```{r}
-# your code goes here (make sure to add comments)
+fit4 <- glm(y ~ Dept + Gender + (Dept*Gender), data = admissions, family = "binomial")
+summary(fit4)
+exp(coefficients(fit4))
 ```
+```{r probs}
+ProbDeptAFemale <- predict(fit4, newdata = data.frame(Gender = "Female", Dept = "A"), type = "response")
+ProbDeptAMale <- predict(fit4, newdata = data.frame(Gender = "Male", Dept = "A"), type = "response")
+ProbDeptBFemale <- predict(fit4, newdata = data.frame(Gender = "Female", Dept = "B"), type = "response")
+ProbDeptBMale <- predict(fit4, newdata = data.frame(Gender = "Male", Dept = "B"), type = "response")
+ProbDeptCFemale <- predict(fit4, newdata = data.frame(Gender = "Female", Dept = "C"), type = "response")
+ProbDeptCMale <- predict(fit4, newdata = data.frame(Gender = "Male", Dept = "C"), type = "response")
+ProbDeptDFemale <- predict(fit4, newdata = data.frame(Gender = "Female", Dept = "D"), type = "response")
+ProbDeptDMale <- predict(fit4, newdata = data.frame(Gender = "Male", Dept = "D"), type = "response")
+ProbDeptEFemale <- predict(fit4, newdata = data.frame(Gender = "Female", Dept = "E"), type = "response")
+ProbDeptEMale <- predict(fit4, newdata = data.frame(Gender = "Male", Dept = "E"), type = "response")
+ProbDeptFFemale <- predict(fit4, newdata = data.frame(Gender = "Female", Dept = "F"), type = "response")
+ProbDeptFMale <- predict(fit4, newdata = data.frame(Gender = "Male", Dept = "F"), type = "response")
+```
+```{r oddsRatio}
+OddsDeptAFemale <- ProbDeptAFemale/(1-ProbDeptAFemale)
+OddsDeptAMale <-  ProbDeptAMale/(1-ProbDeptAMale)
+OddsDeptBFemale <- ProbDeptBFemale/(1-ProbDeptBFemale)
+OddsDeptBMale <-  ProbDeptBFemale/(1-ProbDeptBFemale)
+OddsDeptCFemale <-  ProbDeptCFemale/(1-ProbDeptCFemale)
+OddsDeptCMale <-  ProbDeptCMale/(1-ProbDeptCMale)
+OddsDeptDFemale <-  ProbDeptDFemale/(1-ProbDeptDFemale)
+OddsDeptDMale <-  ProbDeptDMale/(1-ProbDeptDMale)
+OddsDeptEFemale <-  ProbDeptEFemale/(1-ProbDeptEFemale)
+OddsDeptEMale <-  ProbDeptEMale/(1-ProbDeptEMale)
+OddsDeptFFemale <-  ProbDeptFFemale/(1-ProbDeptFFemale)
+OddsDeptFMale <-  ProbDeptFMale/(1-ProbDeptFMale)
+```
+```{r finalOdds}
+OddsDeptAMaleFemale <- OddsDeptAMale/OddsDeptAFemale
+OddsDeptBMaleFemale <- OddsDeptBMale/OddsDeptBFemale
+OddsDeptCMaleFemale <- OddsDeptCMale/OddsDeptCFemale
+OddsDeptDMaleFemale <- OddsDeptDMale/OddsDeptDFemale
+OddsDeptEMaleFemale <- OddsDeptEMale/OddsDeptEFemale
+OddsDeptFMaleFemale <- OddsDeptFMale/OddsDeptFFemale
 
-*Your answer goes here. 1-2 sentences.*
-
+```
+*Departments C and E favor male applicants because the final OddsDept ratios (males:females) are greater than 1.*
 ### Question 3: (5 pts)
 
 ##### 3.1 (1 pt) According to the Akaike information criterion (AIC), which of the four models we created to predict `y` seem to be a better fit?
