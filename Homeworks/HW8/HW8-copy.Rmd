@@ -16,7 +16,8 @@ library(ggplot2)
 library(plotROC)
 ```
 
-## Enter your name and EID here
+## Name: Santhosh Saravanan
+## EID: sks3648
 
 **This homework is due on April 12, 2021 at 8am. Submit a pdf file on Gradescope.**
 
