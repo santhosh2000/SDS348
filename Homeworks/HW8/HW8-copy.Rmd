@@ -1,7 +1,9 @@
 ---
 title: "HW 8"
 author: "SDS348 Spring 2021"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r global_options, include=FALSE}
