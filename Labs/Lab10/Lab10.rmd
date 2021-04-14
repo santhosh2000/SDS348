@@ -1,0 +1,227 @@
+---
+title: "Lab 10"
+author: "SDS348 Spring 2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+#BRO THIS LAB IS ACTUAL CANCER
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, R.options=list(max.print=100))
+
+# Edit the file starting below
+library(tidyverse)
+library(boot)
+library(caret)
+```
+#Welcome to Santhosh's Hell Journey. If you make it through this document, you will feel my cold clammy hands around your neck, strangling you in the name of Father Chungus. Let's begin.
+```{r}
+urine <- na.omit(urine) %>% 
+  mutate_at(-1, function(x)x-mean(x))
+head(urine)
+counts <- urine %>% count(urine$r == 1)
+print(33/77)
+```
+#Answer to 1 is 0.429
+#Answer to 2 is 21.
+```{r}
+fit <- glm(r ~ (.)^2, data = urine, family = "binomial") 
+summary(fit)
+```
+```{r}
+logodds <- predict(fit, type = "link")
+data <- as.vector(logodds)
+class(data)
+print(sum(data > 0)/77)
+probs <- predict(fit, type = "response")
+dasd <- as.vector(probs)
+print(sum(dasd > 0.5)/77)
+#Answer to 3 is 0.389
+```
+#Answer to 4
+```{r}
+performance <- data.frame(
+  probs = predict(fit, type = "response"),
+  predicted = ifelse(probs > 0.5, 1, 0),
+  truth = urine$r
+  )
+table(true_condition = performance$truth, predicted_condition = performance$predicted) %>% 
+  addmargins
+print(41+27)/77
+```
+#5 AUC score of 0.944
+```{r}
+library(plotROC)
+ROCplot <- ggplot(performance) + geom_roc(aes(d = truth, m = probs), n.cuts = 0)
+AUC <- calc_auc(ROCplot)$AUC
+AUC
+```
+#6 cross-auc score is poor.
+```{r}
+set.seed(123)
+
+k = 10 
+
+# Randomly order rows in the dataset
+data <- urine[sample(nrow(urine)), ] 
+
+# Create k folds from the dataset
+folds <- cut(seq(1:nrow(data)), breaks = k, labels = FALSE) 
+
+# Use a for loop to get diagnostics for each test set
+diags_k <- NULL
+for(i in 1:k){
+  # Create training and test sets
+  train <- data[folds != i, ] # all observations except in fold i
+  test <- data[folds == i, ]  # observations in fold i
+  
+  # Train model on training set (all but fold i)
+  fit <- glm(r ~ (.)^2, data = train, family = "binomial")
+  
+  # Test model on test set (fold i)
+  performance <- data.frame(
+    probs = predict(fit, newdata = test, type = "response"),
+    truth = test$r
+      )
+  
+  # Consider the ROC curve for the test dataset
+  ROCplot <- ggplot(performance) + geom_roc(aes(d = truth, m = probs), n.cuts = 0)
+  
+  # Get diagnostics for fold i (AUC)
+  diags_k[i] <- calc_auc(ROCplot)$AUC
+}
+
+# Resulting diagnostics for each of the k folds
+diags_k
+
+# Average performance 
+mean(diags_k)
+```
+```{r}
+fit2 <- glm(r ~ ., data = urine, family = "binomial") 
+performance2 <- data.frame(
+  probs = predict(fit2, type = "response"),
+  predicted = ifelse(probs > 0.5, 1, 0),
+  truth = urine$r
+  )
+library(plotROC)
+ROCplot <- ggplot(performance2) + geom_roc(aes(d = truth, m = probs), n.cuts = 0)
+AUC <- calc_auc(ROCplot)$AUC
+AUC
+#in sample AUC score is 0.899.
+
+```
+```{r}
+library(plotROC)
+ROCplot <- ggplot(performance) + geom_roc(aes(d = truth, m = probs), n.cuts = 0)
+AUC <- calc_auc(ROCplot)$AUC
+AUC
+```
+#6 cross-auc score is poor.
+```{r}
+set.seed(123)
+
+k = 10 
+
+# Randomly order rows in the dataset
+data <- urine[sample(nrow(urine)), ] 
+
+# Create k folds from the dataset
+folds <- cut(seq(1:nrow(data)), breaks = k, labels = FALSE) 
+
+# Use a for loop to get diagnostics for each test set
+diags_k <- NULL
+for(i in 1:k){
+  # Create training and test sets
+  train <- data[folds != i, ] # all observations except in fold i
+  test <- data[folds == i, ]  # observations in fold i
+  
+  # Train model on training set (all but fold i)
+  fit <- glm(r ~ ., data = urine, family = "binomial") 
+  
+  # Test model on test set (fold i)
+  performance <- data.frame(
+    probs = predict(fit, newdata = test, type = "response"),
+    truth = test$r
+      )
+  
+  # Consider the ROC curve for the test dataset
+  ROCplot <- ggplot(performance) + geom_roc(aes(d = truth, m = probs), n.cuts = 0)
+  
+  # Get diagnostics for fold i (AUC)
+  diags_k[i] <- calc_auc(ROCplot)$AUC
+}
+
+# Resulting diagnostics for each of the k folds
+diags_k
+
+# Average performance 
+mean(diags_k)
+```
+#Question #9
+```{r}
+library(glmnet)
+set.seed(123)
+urine1 <- urine %>%
+  na.omit %>% 
+  as.matrix
+cv.lasso1 <- cv.glmnet(x = urine1[ ,-1], y = urine1[ ,1], family = "binomial")
+lasso1 <- glmnet(x = urine1[ ,-1], y = urine1[ ,1], family = "binomial", 
+                 alpha = 1, lambda = cv.lasso1$lambda.1se)
+coef(lasso1)
+```
+# ROC-score is 0.873.
+```{r}
+fit3 <- glm(r ~ gravity + cond + calc, data = urine, family = "binomial") 
+performance3 <- data.frame(
+  probs = predict(fit3, type = "response"),
+  predicted = ifelse(probs > 0.5, 1, 0),
+  truth = urine$r
+  )
+library(plotROC)
+ROCplot <- ggplot(performance3) + geom_roc(aes(d = truth, m = probs), n.cuts = 0)
+AUC <- calc_auc(ROCplot)$AUC
+AUC
+```
+```{r}
+set.seed(123)
+
+k = 10 
+
+# Randomly order rows in the dataset
+data <- urine[sample(nrow(urine)), ] 
+
+# Create k folds from the dataset
+folds <- cut(seq(1:nrow(data)), breaks = k, labels = FALSE) 
+
+# Use a for loop to get diagnostics for each test set
+diags_k <- NULL
+for(i in 1:k){
+  # Create training and test sets
+  train <- data[folds != i, ] # all observations except in fold i
+  test <- data[folds == i, ]  # observations in fold i
+  
+  # Train model on training set (all but fold i)
+fit3 <- glm(r ~ gravity + cond + calc, data = urine, family = "binomial") 
+  
+  # Test model on test set (fold i)
+  performance <- data.frame(
+    probs = predict(fit3, newdata = test, type = "response"),
+    truth = test$r
+      )
+  
+  # Consider the ROC curve for the test dataset
+  ROCplot <- ggplot(performance) + geom_roc(aes(d = truth, m = probs), n.cuts = 0)
+  
+  # Get diagnostics for fold i (AUC)
+  diags_k[i] <- calc_auc(ROCplot)$AUC
+}
+
+# Resulting diagnostics for each of the k folds
+diags_k
+
+# Average performance 
+mean(diags_k)
+```
+# I hope you enjoyed the ride. Feel my hands erase your soul and suck you up like a buttercup . Amen to WongChungus
