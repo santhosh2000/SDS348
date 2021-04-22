@@ -1,6 +1,5 @@
 ---
-title: Is there any relationship between race and types of crime committed in 1978
-  America?
+title: Is there any relationship between race and types of crime committed in 1978 America?
 author: "Santhosh Saravanan"
 date: "`r Sys.Date()`"
 output:
@@ -289,8 +288,62 @@ fit1 <- glm(y ~ robbery + murder, data= Guns1978, family = "binomial")
 summary(fit1)
 exp(coefficients(fit1))
 ```
+*The odds of a shall carry law in effect are 0.99 times for a robbery charge than the odds are for a murder. The odds of a shall carry law in effect are 0.72 times for a murder charge than the odds are for a robbery.*
 
-  #### Citations
-  *Violent crime rates by US State. (n.d.). Retrieved March 22, 2021, from https://vincentarelbundock.github.io/Rdatasets/doc/datasets/USArrests.html*
-  *Statistics, B. (n.d.). Spreadsheets - crime &amp; Justice electronic Data Abstracts at the Bureau of Justice Statistics. Retrieved March 22, 2021, from https://www.bjs.gov/content/dtdata.cfm#National*
+```{r}
+# Based on predicted probabilities...
+Guns1978$prob1 <- predict(fit1, type = "response")
+
+# ... we can classify a clump as malignant or not (for example apply a cutoff of 0.5)
+Guns1978$predicted <- ifelse(Guns1978$prob1 > 8.744202e-03, "yes", "no")
+```
+```{r confusion}
+# Confusion matrix: compare true to predicted condition
+table(true_condition = Guns1978$law, predicted_condition = Guns1978$predicted) %>% 
+  addmargins
+# Accuracy (correctly classified cases)
+(4+9)/51 
+
+# Sensitivity (True Positive Rate, TPR)
+4/(4+38)
+
+# Specificity (True Negative Rate, TNR)
+9/(9+38)
+
+# Precision (Positive Predictive Value, PPV)
+4/4+0
+
+```
+```{r}
+# Predicted log odds 
+Guns1978$logit <- predict(fit1, type = "link") 
+# Density plot of log-odds for each outcome
+Guns1978 %>%
+  ggplot() + 
+  geom_density(aes(logit, color = law, fill = law), alpha = .4) +
+    geom_rug(aes(logit, color = law)) +
+  geom_text(x = -15, y = .07, label = "TN = 9") +
+  geom_text(x = -2, y = .008, label = "FN = 38") +
+  geom_text(x = -1, y = .006, label = "FP = 0") +
+  geom_text(x = 0, y = .04, label = "TP = 4") +
+  theme(legend.position = c(.85,.85)) +
+  geom_vline(xintercept = 0) + 
+  xlab("logit (log-odds)") + ggtitle("Density plot of log-odds for each outcome")
+```
+```{r ROC}
+# Call the library plotROC
+library(plotROC) 
+
+# Plot ROC depending on values of y and its probabilities displaying some cutoff values
+ROCplot1 <- ggplot(Guns1978) + 
+  geom_roc(aes(d = y, m = prob1), cutoffs.at = list(0.1, 0.5, 0.9))
+ROCplot1
+```
+```{r AUC}
+# Calculate the area under the curve still using the library plotROC with function calc_auc
+calc_auc(ROCplot1)
+```
+*According to the rule of thumb, this model is excellent in terms of prediction power as its AUC score is greater than 0.9. However, I believe there has been significant overfitting done with my logistic regression model.*
+
+
 
